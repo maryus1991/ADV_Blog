@@ -1,0 +1,37 @@
+version : "4.0"
+
+services:
+  blog:
+    restart : always
+    container_name : blog
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=django-insecure-q=@t6qz@yr=uerjo!=67cdmz$w9i9hmq6mj-ustc*p9v&53^wc
+      - DEBUG=True
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=blogCore
+      - POSTGRES_HOST=postgres-blog
+    
+    depends_on:
+      - postgres-blog
+
+  postgres-blog:
+    image: postgres
+    volumes:
+      - blog-postgres-data:/var/lib/postgresql/data/
+
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=blogCore
+
+
+
+volumes:
+  blog-postgres-data:
