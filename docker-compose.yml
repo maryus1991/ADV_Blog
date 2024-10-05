@@ -1,6 +1,20 @@
-version : "4.0"
+version : 3.9"
 
 services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    volumes:
+      - blog-postgres-data:/var/lib/postgresql/data/
+
+    ports:
+      - 5432:5432
+      
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=blogDB
+
   blog:
     restart : always
     container_name : blog
@@ -15,21 +29,13 @@ services:
       - DEBUG=True
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=blogCore
-      - POSTGRES_HOST=postgres-blog
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=postgres
     
     depends_on:
-      - postgres-blog
+      - postgres
 
-  postgres-blog:
-    image: postgres
-    volumes:
-      - blog-postgres-data:/var/lib/postgresql/data/
 
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=blogCore
 
 
 
