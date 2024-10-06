@@ -28,10 +28,10 @@ class UserManager(BaseUserManager):
         """
         for Creating admin user that haa full control
         """
-        extra_fields.setdefault('is_staff', Tr)
-        extra_fields.setdefault('is_superuser', Tr)
-        extra_fields.setdefault('is_active', Tr)
-        extra_fields.setdefault('is_verified', Tr)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_verified', True)
         
         if extra_fields.get('is_staff') is not True:
             raise ValueError(_('Superuser must have is_staff=True'))            
@@ -69,17 +69,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-
-
-"""
-    public | auth_group                 | table | root
- public | auth_group_permissions     | table | root
- public | auth_permission            | table | root
- public | auth_user                  | table | root
- public | auth_user_groups           | table | root
- public | auth_user_user_permissions | table | root
- public | django_admin_log           | table | root
- public | django_content_type        | table | root
- public | django_migrations          | table | root
- public | django_session             | table | root
-   """
