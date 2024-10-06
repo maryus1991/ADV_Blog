@@ -43,7 +43,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # installed app
+    'django_render_partial',
+
+
+    'blog',
+    'accounts'
 ]
+
+AUTH_USER_MODEL='accounts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,7 +69,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,7 +94,7 @@ DATABASES = {
         "NAME": config('POSTGRES_DB'),   
         "USER": config('POSTGRES_USER'), 
         "PASSWORD": config('POSTGRES_PASSWORD'),
-        "HOST": config('POSTGRES_HOST'), 
+        "HOST": config('POSTGRES_HOST', default='postgres'), 
         "PORT": 5432,
     }
 }
@@ -124,7 +133,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'assets/'
+STATIC_ROOT= 'static-cdn/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+] 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
