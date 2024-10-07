@@ -1,18 +1,21 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView
-
+from django.views.generic import DeleteView, ListView
+from .models import Post
 # Create your views here.
 
-class PostsListsViews(TemplateView):
+class PostsListsViews(ListView):
     """
     List views for posts models
     """
+    model = Post
     template_name = 'blog/news-grid.html'
+    context_object_name = 'posts'
 
-class PostsDetailViews(TemplateView):
+class PostsDetailViews(DeleteView):
     """
     detail the posts models
     """
+    model = Post
     template_name = 'blog/news-details.html'
 
 # render partial for header and footer

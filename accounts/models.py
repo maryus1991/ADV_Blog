@@ -59,7 +59,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     verified_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
-    
     first_name = models.CharField(null=True, blank=True, max_length=255)
     last_name = models.CharField(null=True, blank=True, max_length=255)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
@@ -69,3 +68,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    def get_full_name(self):
+        """
+        for getting the full name if exist or get email
+        """
+        if self.first_name is not None and self.last_name is not None:
+            return self.first_name + ' ' + self.last_name 
+        else:
+            return self.email
+
+
+    
