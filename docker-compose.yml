@@ -16,7 +16,6 @@ services:
       - POSTGRES_DB=postgres
 
   blog:
-    restart : always
     container_name : blog
     build: .
     command: python manage.py runserver 0.0.0.0:8000
