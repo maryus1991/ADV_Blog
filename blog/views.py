@@ -35,10 +35,11 @@ class PostsDetailViews(DetailView):
         
         return context
     
-    def get_queryset(self):
-        # todo : fix this problem
-        return super().get_queryset().annotate(comment_count=Count('postscomment'), views=Count('view')).filter(is_active=True).all()
-    
+    def get_queryset(self): 
+        post = Post.objects.annotate(views=Count('view')).prefetch_related('postscomment_set')
+        post.filter(is_active=True, id=self.kwargs['pk']).first()
+        return post
+
 
 # render partial for header and footer
 

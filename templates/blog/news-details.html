@@ -47,165 +47,58 @@
                         <div class="news-top">
                             <div class="icon-text">
                                 <span class="viewers fs-10"><a href="#"><i class="fal fa-eye"></i> {{ post.views }} Views</a></span>
-                                <span class="comment fs-10"><a href="#"><i class="fal fa-comments"></i> {{ post.comment_count }} Comments</a></span>
+                                <span class="comment fs-10"><a href="#"><i class="fal fa-comments"></i> {{ post.postscomment_set.count }} Comments</a></span>
                                 <span class="date fs-10"><a><i class="fal fa-calendar-alt"></i> {{ post.updated_at.date }} </a></span>
                             </div>
                             <div class="feature-section">
                                 <h2 class="section-title">{{ post.title }}</h2>
-                                <ul class="title-inner">
-                                    <li class="sect-title">
-                                        <h3>Business to business (B2B), which is the direct sale of goods and
-                                            services between businesses</h3>
-                                    </li>
-                                    <li class="sect-title">
-                                        <h3>Providing goods and services isn't as easy as it may seem. It
-                                            a lot of research about the products</h3>
-                                    </li>
-                                    <li class="sect-title">
-                                        <h3>Consumer to consumer, which allows individuals to sell to one
-                                            usually through a third-party site like eBay</h3>
-                                    </li>
-                                    <li class="sect-title">
-                                        <h3>Services you wish to sell, the market, audience, competition, as
-                                            as expected business costs.</h3>
-                                    </li>
-                                </ul>
+                               
                             </div>
                             <p class="description">
-                                A great commerce experience cannot be distilled to a single number. It’s not a
-                                Lighthouse
-                                score, or a set of Core Web Vitals figures, although both are important inputs. A great
-                                commerce experience is a trilemma that carefully balances competing needs of delivering
-                                great customer experience, dynamic storefront
-                                capabilities, and long-term business — conversion, retention, re-engagement —
-                                objectives. As
-                                developers, we rightfully obsess about the customer experience, relentlessly working to
-                                squeeze every millisecond out of the critical rendering path, optimize input latency,
-                                and
-                                eliminate jank. At the limit, statically generated, edge delivered, and HTML-first pages
-                                look like the optimal strategy. That is until you are confronted with the realization
-                                that
-                                the next step function in improving conversion rates and business.
-                            </p>
-                            <p class="description">
-                                The term electronic commerce (ecommerce) refers to a business model that allows
-                                companies
-                                and individuals to buy and sell goods and services over the Internet. Ecommerce operates
-                                in
-                                four major market segments and can be conducted over computers, tablets, smartphones,
-                                and
-                                other smart devices. Nearly every imaginable product and service is available through
-                                ecommerce transactions, including books, music, plane tickets, and financial services
-                                such
-                                as stock investing and online banking. As such, it is considered a very disruptive
-                                technology.
+                                {{ post.text }}
                             </p>
                             <div class="image-section">
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="image-1">
-                                            <img src="assets/images/blog-details/img-1.jpg" alt="img">
+                                            {% if post.image %} 
+                                                <img src="{{ post.image.url }}" width='454px' height='341px' alt="img">
+                                            {% else %}
+                                                <img src="assets/images/background/furniture-banner.webp" alt="img">
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="image-2">
-                                            <img src="assets/images/blog-details/img-2.jpg" alt="img">
+                                            {% if post.image2 %}
+                                                <img src="{{ post.image2.url }}" width='454px' height='341px' alt="img">
+                                            {% else %}
+                                                <img src="assets/images/background/furniture-banner.webp" width='454px' height='341px' alt="img">
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <p class="description">
-                                Once that's determined, you need to come up with a name and set up a legal structure,
-                                such
-                                as a corporation. Next, set up an ecommerce site with a payment gateway. For instance, a
-                                small business owner who runs a dress shop can set up a website promoting their clothing
-                                and
-                                other related products online and allow customers to make payments with a credit card or
-                                through a payment processing service, such as PayPal.
+                                {{ post.text2 }}
                             </p>
                         </div>
 
                         
-                        <p class="description2">
-                            Ecommerce has changed the way people shop and consume products and services. More and more
-                            people are turning to their computers and smart devices to order goods, which can easily be
-                            delivered to their homes. As such, it has disrupted the retail landscape. Amazon and Alibaba
-                            have gained considerable
-                            popularity, forcing traditional retailers to make changes to the way they do business.
-                        </p>
-                        <!-- <div class="button-area">
-                            <div class="row justify-content-between">
-                                <div class="col-lg-6 col-sm-6 col-12">
-                                    <div class="tag-area">
-                                        <h3>Related Tags</h3>
-                                        <div class="button-tag">
-                                            <ul>
-                                                <li><a href="#">Popular</a></li>
-                                                <li><a href="#">Design</a></li>
-                                                <li><a href="#">UX</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-sm-6 col-12 text-sm-end text-start">
-                                    <div class="social-area">
-                                        <div class="social-title">
-                                            <h3>Social Share</h3>
-                                        </div>
-                                        <div class="social-icon">
-                                            <ul>
-                                                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                                                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                                                <li><a href="#"><i class="fab fa-behance"></i></a></li>
-                                                <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-                                                <li><a href="#"><i class="fab fa-tumblr"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="post-area">
-                                <div class="row align-items-center justify-content-between">
-                                    <div class="col-lg-4 col-sm-4 col-12 text-start">
-                                        <div class="previous-post">
-                                            <div class="post-img">
-                                                <a href="#"><img src="assets/images/blog-details/prev-post.jpg"
-                                                        alt="prev-post"></a>
-                                            </div>
-                                            <div class="post-text">
-                                                <h3 class="sub-title">Prev Post</h3>
-                                                <h2 class="sect-title"><a href="#">Tips On Minimalist</a></h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-sm-4 col-12 text-sm-center text-start">
-                                        <div class="icon-area">
-                                            <a href="#"><img src="assets/images/blog-details/shape.png" alt="img"></a>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="col-lg-4 col-sm-4 col-12 text-sm-end text-start justify-content-sm-end justify-content-start">
-                                        <div class="next-post">
-                                            <div class="post-text">
-                                                <h3 class="sub-title">Next Post</h3>
-                                                <h2 class="sect-title"><a href="#">Less Is More</a></h2>
-                                            </div>
-                                            <div class="post-img">
-                                                <a href="#"><img src="assets/images/blog-details/next-post.jpg"
-                                                        alt="next-post"></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
+                        <div class="button-area">
+
+
                             <div class="comment-header">
                                 <div class="comment">
-                                    <h3>04 Comment</h3>
+                                    <h3>نظرات({{ post.postscomment_set.count }})</h3>
                                 </div>
                                 <div class="icon">
-                                    <a href="#"><i class="fal fa-comments"></i></a>
+                                    <a><i class="fal fa-comments"></i></a>
                                 </div>
                             </div>
+
+                            
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="comment-section">
@@ -312,6 +205,9 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
                             <div class="rating-area">
                                 <div class="rating-text">
                                     <h2 class="text">Give Your Opinion</h2>
@@ -361,7 +257,7 @@
                                 </div>
 
                             </div>
-                        </div> -->
+                        </div> 
                     </div>
                 </div>
                 <div class="col-lg-4 pl-30 pl-lg-15 pl-md-15 pl-xs-15">
