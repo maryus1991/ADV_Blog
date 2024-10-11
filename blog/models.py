@@ -30,10 +30,20 @@ class PostViews(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='view')
     ip = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    count = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.post.title}'
     
+
+class PostsCommentsManager(models.Manager):
+    
+    """
+    for showing just active objects 
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=True).all()
+
 
 class PostsComment(models.Model):
     """
@@ -48,6 +58,8 @@ class PostsComment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+
+    objects = PostsCommentsManager()
 
     def __str__(self):
         return self.full_name + '/' + self.email

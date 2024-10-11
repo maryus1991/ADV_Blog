@@ -1401,3 +1401,8 @@ if (nstSlider.length) {
     }
   });
 }
+
+function set_parent(pid){
+    document.getElementById('comment_form').scrollIntoView()
+    document.getElementById('pid').value = pid
+  }
