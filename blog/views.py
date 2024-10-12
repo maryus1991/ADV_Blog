@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic import DetailView, ListView
 from .models import Post, PostViews, PostsComment
 from django.db.models.aggregates import Count
@@ -29,25 +29,29 @@ class PostsDetailViews(DetailView):
         """
         for creating comment for this post 
         """
-        pk = self.kwargs.get('pk')
+
         form = CommentModelForm(request.POST)
+        
         if form.is_valid():
 
-            try : 
-                pid = form.cleaned_data.get('pid') 
-            except AttributeError  : 
+
+            pid = request.POST.get('parent')
+            if pid != '':
+                pid = int(pid)
+            else: 
                 pid = None
-            except TypeError   : 
-                pid = None
-                
+
+
+
             PostsComment.objects.create(
                 email=form.cleaned_data.get('email'),
                 comment=form.cleaned_data.get('comment'),
                 full_name=form.cleaned_data.get('full_name'),
-                post_id=pk,
+                post=self.get_object(),
                 parent_id= pid
-            ).save()
-        return reverse('PostsDetailViews', kwargs={'pk':pk})
+            )
+
+        return redirect(reverse('PostsDetailViews', kwargs={'pk': self.get_object().id}))
 
 
 
@@ -67,13 +71,23 @@ class PostsDetailViews(DetailView):
             user = request.user if request.user.is_authenticated else None
         )
         
-        # changing the view count if exist
-        if view[1]:
-            view[0].count = view[0].count + 1
+        # changing the count of the views
+        count = 0 
+        if view[0].count is not None:
+            count = view[0].count
+            
+        view[0].count = count  + 1
+        view[0].save()
 
         # setting the comment form
         context['comment_form'] = CommentModelForm
         
+        # adding the most view post
+        context['most_view_post'] = Post.objects.order_by('-view__count').all()[:5]
+
+        # adding the parent comments
+        context['comments'] = PostsComment.objects.filter(parent=None, post=self.get_object()).all()
+
         return context
     
     def get_queryset(self): 
@@ -81,9 +95,7 @@ class PostsDetailViews(DetailView):
         for get the views count and prefetch_related the comment 
         """
         post = Post.objects.annotate(views=Count('view')).prefetch_related('postscomment_set')
-        post.filter(is_active=True, id=self.kwargs['pk']).first()
         return post
-
 
 # render partial for header and footer
 
