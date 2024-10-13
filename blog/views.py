@@ -86,7 +86,7 @@ class PostsDetailViews(DetailView):
         context['most_view_post'] = Post.objects.order_by('-view__count').all()[:5]
 
         # adding the parent comments
-        context['comments'] = PostsComment.objects.filter(parent=None, post=self.get_object()).all()
+        context['comments'] = PostsComment.objects.filter(parent=None, post=self.get_object()).prefetch_related('child').all()
 
         return context
     
