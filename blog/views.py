@@ -19,19 +19,24 @@ class PostsListsViews(ListView):
     ordering = '-id'
 
     def get_queryset(self):
+        """
+        for searching in post by word 
+        """
+        # getting request 
         request = self.request
+
+        # search param in url it gonna return posts thats contains this word in there title or texts
+        # if search param not  in url its gonna called the base get queryset func 
 
         if request.GET.get('search') is not None :
             query = request.GET.get('search')
 
             return  Post.objects.filter(
-                                Q(is_active=True) ,
-                                Q( title__icontains=query) |
-                                Q( text__icontains=query) |
-                                Q( text2__icontains=query) 
+                                Q( is_active=True ) ,
+                                Q( title__icontains=query ) |
+                                Q( text__icontains=query  ) |
+                                Q( text2__icontains=query ) 
                                 ).all()
-
-            
 
         else:
             return super().get_queryset()
@@ -57,7 +62,7 @@ class PostsDetailViews(DetailView):
         
         if form.is_valid():
 
-
+            # getting the parent id and check it not empty
             pid = request.POST.get('parent')
             if pid != '':
                 pid = int(pid)
@@ -65,7 +70,7 @@ class PostsDetailViews(DetailView):
                 pid = None
 
 
-
+            # create the comment 
             PostsComment.objects.create(
                 email=form.cleaned_data.get('email'),
                 comment=form.cleaned_data.get('comment'),
@@ -74,6 +79,7 @@ class PostsDetailViews(DetailView):
                 parent_id= pid
             )
 
+        # return for the posts
         return redirect(reverse('PostsDetailViews', kwargs={'pk': self.get_object().id}))
 
 
