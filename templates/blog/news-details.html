@@ -5,6 +5,28 @@
     post
 {% endblock title %}
 
+{% block breadcrumbs_title %}
+  {{ post.title }}
+{% endblock breadcrumbs_title %}  
+
+{% block breadcrumbs_contents %}
+    <li>
+        <a class="home-page-link" href="{% url 'PostsListsViews' %}"> 
+            پست ها
+            <i class="fal fa-angle-right"></i>
+         </a>
+    </li>
+
+    <li>
+        <a class='current-page' href="{% url 'PostsDetailViews' post.pk %}">
+            {{ post.title|truncatechars:20 }}
+
+        </a>
+
+    </li>
+
+{% endblock breadcrumbs_contents %}
+
 {% block content %}
 
     <!--================= Preloader Section Start Here =================-->
@@ -129,8 +151,8 @@
                                     {% for sub_comment in comment.child.all %}
                                             
                                             <div class="row">
-                                                <div class="col-lg-2"></div>
-                                                <div class="col-lg-10">
+                                                <div class="col-lg-4"></div>
+                                                <div class="col-lg-8">
                                                     <div class="comment-section">
                                                         <div class="comment-text">
                                                             <div class="text">
@@ -154,8 +176,10 @@
                                             </div> 
                                             
                                         {% endfor %}
-
-                                {% endfor %}
+                                <br>
+                                <br>
+                                <br>
+                            {% endfor %}
 
 
                             <div class="comment-form mb-10">
@@ -212,8 +236,6 @@
                             <ul class="post-list">
                                 {% for post in most_view_post %}
                                 <li>
-                                    
-
                                         <div class="blog-post mb-30">
                                             <a href="{% url 'PostsDetailViews' post.id %}"><img width='70px' height='70px' src="{{ post.image.url }}"
                                                     alt="Post Img"></a>
@@ -224,6 +246,10 @@
                                                 <span class="fs-14"><i class="fal fa-calendar-alt"></i> 
                                                     {{ post.updated_at }}
                                                 </span>
+                                                <br>
+                                                <span class="fs-14"> 
+                                                    {{ post.most_view_post_count }} : views     
+                                                <span>
                                             </div>
                                         </div>
                                     </li>

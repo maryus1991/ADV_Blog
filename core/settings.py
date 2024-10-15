@@ -47,9 +47,10 @@ INSTALLED_APPS = [
     # installed app
     'django_render_partial',
 
-
+    # created app
     'blog',
-    'accounts'
+    'accounts',
+    'SiteSetting'
 ]
 
 AUTH_USER_MODEL='accounts.User'

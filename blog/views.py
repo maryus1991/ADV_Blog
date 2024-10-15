@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import DetailView, ListView
 from .models import Post, PostViews, PostsComment
 from django.db.models.aggregates import Count
+from django.db.models import Q
 from django.urls import reverse
 from utils.get_ip import get_ip
 from .forms import CommentModelForm
@@ -16,6 +17,28 @@ class PostsListsViews(ListView):
     template_name = 'blog/news-grid.html'
     context_object_name = 'posts'
     ordering = '-id'
+
+    def get_queryset(self):
+        request = self.request
+
+        if request.GET.get('search') is not None :
+            query = request.GET.get('search')
+
+            return  Post.objects.filter(
+                                Q(is_active=True) ,
+                                Q( title__icontains=query) |
+                                Q( text__icontains=query) |
+                                Q( text2__icontains=query) 
+                                ).all()
+
+            
+
+        else:
+            return super().get_queryset()
+    
+    
+
+
 
 class PostsDetailViews(DetailView):
     """
@@ -83,7 +106,7 @@ class PostsDetailViews(DetailView):
         context['comment_form'] = CommentModelForm
         
         # adding the most view post
-        context['most_view_post'] = Post.objects.order_by('-view__count').all()[:5]
+        context['most_view_post'] = Post.objects.order_by('view').annotate(most_view_post_count=Count('view')).all()[:5]
 
         # adding the parent comments
         context['comments'] = PostsComment.objects.filter(parent=None, post=self.get_object()).prefetch_related('child').all()
@@ -94,7 +117,7 @@ class PostsDetailViews(DetailView):
         """
         for get the views count and prefetch_related the comment 
         """
-        post = Post.objects.annotate(views=Count('view')).prefetch_related('postscomment_set')
+        post = Post.objects.annotate(views=Count('view'))
         return post
 
 # render partial for header and footer
