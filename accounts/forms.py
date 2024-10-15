@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+from django.core import exceptions
 
 User = get_user_model()
 
@@ -57,4 +59,14 @@ class RegistrationForm(forms.ModelForm):
         else :
             raise ValidationError('کلمه عبور و تکرار ان غیر هم سان هستند')
 
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+
+        try:
+            validate_password(password)
+            return password
+        except exceptions.ViewDoesNotExist as err:
+            raise ValidationError(list(err.messages))
+    
     

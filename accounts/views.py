@@ -3,12 +3,12 @@ from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
-# from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 
 from .models import User
 from .forms import RegistrationForm, LoginForm
 
-# User = get_user_model()
+
 
 class Dashboard(LoginRequiredMixin, TemplateView):
     """
@@ -40,24 +40,46 @@ class Registrations(View):
 
     success_url = reverse_lazy('Authorizations')
     form_class = RegistrationForm       
-    # success_message = 'حساب شما با موفقیت ساخته شد وبرای شما ایمیل فرستاده شد جهت تایید حساب شما'
+    success_message = 'حساب شما با موفقیت ساخته شد وبرای شما ایمیل فرستاده شد جهت تایید حساب شما'
     
+    # get method for redirect to login page
+    def get(self, request, *arg, **kwargs):
+        return redirect(reverse('Authorizations'))
+
+    # post method for create user
     def post(self, request, *arg, **kwargs):
         # get if user is not authenticated
-        if not request.user.is_authenticated:
-            # get user info 
-            email = request.POST.get('email')
-            password = request.POST.get('password')
+        # if not request.user.is_authenticated:
+        
+        # get user info 
+        form  = RegistrationForm( request.POST )
 
-            # check if user is not exist
-            user = User.objects.filter(email=email).exists()
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+        else :
+            pass
 
-            # create  user if is not exist            
-            if not user :
-                User.objects.create_user(
-                    email=email,
-                    password=password
-                )
+
+        # validate the password 
+        # try: 
+        #     validate_password(password=password)
+        # except : 
+        #     # todo : add some massage
+        #     return redirect(reverse('Authorizations'))
+
+
+        # check if user is not exist
+        user = User.objects.filter(email=email).exists()
+        
+        # create  user if is not exist            
+        if not user :
+            User.objects.create_user(
+                email=email,
+                password=password
+            )
+        
+        # todo : send email to conform
     
         # return user for login page to login and conform his account 
         return redirect(reverse('Authorizations'))
