@@ -15,6 +15,32 @@
 
     <body>
         {% render_partial 'blog.views.header_render_partial' %}
+        <!-- breadcrumbs -->
+        <div class="page-path">
+            <div class="container">
+                <div class="breadcrumbs-inner">
+                    <h3 class="path-title">
+                        {% block breadcrumbs_title %}   
+                        
+                        {% endblock breadcrumbs_title %}
+                    </h3>
+                    <ul>
+                        {% block breadcrumbs_contents %}
+                        
+                        {% endblock breadcrumbs_contents %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% if messages %}
+
+            {% for message in messages %}
+                <div class='alert {% if message.tags == "error" %} alert-danger {% else %} alert-{{message.tags}}  {% endif %}'> 
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+        {% endif %}
         {% block content %}
         
         {% endblock content %}
