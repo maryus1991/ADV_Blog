@@ -1,5 +1,5 @@
 from django.views.generic.base import TemplateView
-from django.views.generic import View 
+from django.views.generic import View, RedirectView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
@@ -8,9 +8,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 from django.utils.crypto import get_random_string
+from django.shortcuts import get_object_or_404, render
+
+from datetime import datetime
 
 from .models import User
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, ChangePasswordForm, SendMail_EmailField
 
 
 
@@ -264,7 +267,33 @@ class Logout(View):
         return redirect(reverse('Authorizations'))
 
 
-class ConformAccount():pass
+class ConformAccount(RedirectView):
+    """
+    get the verified token and verify the account
+    """
+    
+    
+    pattern_name = 'Authorizations'
+
+    def get_redirect_url(self,  *args, **kwargs):
+        """
+        verify the the user account if the user enter the current token
+         
+        """
+        # get the token from url
+        token = kwargs.get('token')
+        
+        # get the user object
+        user = get_object_or_404(User, verified_code=token)
+
+        # edit and verify the user and save
+        user.is_verified = True
+        user.verified_date = datetime.now()
+        user.verified_code = get_random_string(255)
+        user.save()
+
+        # send the user to login page
+        return reverse('Authorizations')
 
 
 class ResentEmail():pass
@@ -273,7 +302,144 @@ class ResentEmail():pass
 class UpdateProfile():pass
 
 
-class ForgotPassword():pass
+class ForgotPassword(View):
+    """
+    template view for forgot pass send email 
+    """
 
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        calling the dispatch method for checking that the user is not login  
+        """
+        if request.user.is_authenticated:
+            messages.warning(
+                request,
+                'لطفا اول از حساب کاربری خود خارج شوید'
+            )
+
+            # edit the user verify code 
+            user = get_object_or_404(User, id = request.user.id)
+            
+            # redirect the user to dashboard 
+            return redirect(reverse('Dashboard'))
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # for return a render page to email input
+        return render(request, 'accounts/ForgotPassword_SendPassword.html', 
+            {'SendMail_EmailField': SendMail_EmailField})
+
+    def post(self, request, *args, **kwargs):
+        # post method for check and validate email and send email
+
+        # form validate
+        form = SendMail_EmailField( request.POST )
+        if form.is_valid():
+
+            # getting email
+            email = form.cleaned_data.get('email')
+
+            # getting user by email
+            user = User.objects.filter(email= email).first()
+
+            # checking if user exist
+            if user is not None:
+                # todo send mail
+                
+                
+                messages.success(
+                    request,
+                    f'ایمیل با موفقیت برای ایمیل ( {  email  } ) شما ارسال شد'
+                )
+                return redirect(reverse('ForgotPassword'))
+
+            else:
+                # add the error and message if user is not exist
+                messages.error(
+                    request,
+                    'کاربر یافت نشد'
+                )
+                return redirect(reverse('ForgotPassword'))
+        else:
+            # add the error and message if form is not valid
+            messages.error(
+                request,
+                form.errors
+            )
+            return redirect(reverse('ForgotPassword'))
+
+
+class ForgotPassword_Token(View):
+    """
+    change the user password and detach the user user from token
+    """
+
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        calling the dispatch method for checking that the user is not login  
+        """
+        if request.user.is_authenticated:
+            messages.warning(
+                request,
+                'لطفا اول از حساب کاربری خود خارج شوید'
+            )
+
+            # edit the user verify code 
+            user = get_object_or_404(User, id = request.user.id)
+            
+            # redirect the user to dashboard 
+            return redirect(reverse('Dashboard'))
+
+        return super().dispatch(request, *args, **kwargs)
+    
+
+    def get(self, request, *args, **kwargs):
+        # get method for showing change pass form
+        return render(request, 'accounts/ForgotPassword.html', {'ChangePasswordForm': ChangePasswordForm})
+
+    def post(self, request, *args, **kwargs):
+        # post method for set the new pass in db
+        
+        # get the token
+        token = kwargs.get('token')
+
+        # getting the form 
+        form = ChangePasswordForm(request.POST)
+
+        # form validation and getting the password 
+        if form.is_valid():
+            password = form.cleaned_data.get('password')
+
+            # getting the user
+            user = get_object_or_404(User, verified_code = token)
+            
+            # checking if user is exist
+            if user is not None:
+                user.set_password(password)
+                user.verified_code = get_random_string(255)
+                user.save()
+                messages.success(
+                    request,
+                    'رمز عبور شما با موفقیت تغییر یافت'
+                )
+                return redirect(reverse('Authorizations'))
+            else:
+                messages.error(
+                    request,
+                    'کابر یافت نشد'
+                )
+                return redirect(reverse('Authorizations'))
+
+        else:
+            # returning the invalid form errors 
+            messages.error(
+                    request,
+                    form.errors
+                    )
+            return redirect(reverse('ForgotPassword_token', kwargs={'token': token}))
+            
 
 class ChangePassword():pass
