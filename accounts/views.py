@@ -7,6 +7,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
+from django.utils.crypto import get_random_string
 
 from .models import User
 from .forms import RegistrationForm, LoginForm
@@ -120,6 +121,7 @@ class Registrations(View):
             )
             return redirect(reverse('Dashboard'))
 
+
 class Login(View):
     """ 
     for login system
@@ -162,6 +164,8 @@ class Login(View):
                                 # login the user finally and redirect to dashboard
                                 
                                 if user == authenticate(email=email, password=password):    
+                                    user.verified_code = get_random_string(255)
+                                    user.save()
                                     login(request, user)
                                     return redirect(reverse('Dashboard'))
                                 else:
@@ -220,6 +224,7 @@ class Login(View):
             )
             return redirect(reverse('Dashboard'))
 
+
 class Logout(View):
     # logout system
 
@@ -257,3 +262,18 @@ class Logout(View):
             'منتظر ورود دوباره شما هستیم '
         )
         return redirect(reverse('Authorizations'))
+
+
+class ConformAccount():pass
+
+
+class ResentEmail():pass
+
+
+class UpdateProfile():pass
+
+
+class ForgotPassword():pass
+
+
+class ChangePassword():pass
