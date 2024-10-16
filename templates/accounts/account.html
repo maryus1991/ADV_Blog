@@ -65,6 +65,16 @@
     <!--================= Header Section End Here =================-->
 
     <div class="rts-account-section section-gap">
+                        
+        {% if messages %}
+
+            {% for message in messages %}
+                <div class='alert {% if message.tags == "error" %} alert-danger {% else %} alert-{{message.tags}}  {% endif %}'> 
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+        {% endif %}
         <div class="container">
             <div class="account-inner">
                 <div class="account-side-navigation">

@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
 from django.contrib.auth.password_validation import validate_password
-
+from django.contrib import messages
 from .models import User
 from .forms import RegistrationForm, LoginForm
 
@@ -38,10 +38,7 @@ class Registrations(View):
     for register the user
     """
 
-    success_url = reverse_lazy('Authorizations')
-    form_class = RegistrationForm       
-    success_message = 'حساب شما با موفقیت ساخته شد وبرای شما ایمیل فرستاده شد جهت تایید حساب شما'
-    
+
     # get method for redirect to login page
     def get(self, request, *arg, **kwargs):
         return redirect(reverse('Authorizations'))
@@ -49,39 +46,60 @@ class Registrations(View):
     # post method for create user
     def post(self, request, *arg, **kwargs):
         # get if user is not authenticated
-        # if not request.user.is_authenticated:
-        
-        # get user info 
-        form  = RegistrationForm( request.POST )
+        if not request.user.is_authenticated:
+            
+            # get user info from form
+            form  = RegistrationForm(  request.POST  )
 
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
+
+
+            if form.is_valid():
+
+                password = form.cleaned_data.get('password')
+                email = form.cleaned_data.get('email')
+
+                # check if user is not exist
+                user = User.objects.filter(email=email).exists()
+                
+                # create  user if is not exist            
+                if not user :
+
+                    User.objects.create_user(
+                        email=email,
+                        password=password
+                )
+                    messages.add_message(request, messages.SUCCESS,
+                    '  حساب کاربری شما با موفقیت ساخنه شد و یک ایمیل جهت فعال سازی حساب کاربری خود ارسال شد'                        
+                    )
+                    # todo : send email to conform
+                    return redirect(reverse('Authorizations'))
+    
+                else:
+                    messages.warning(
+                        request, 
+                    'کاربری با این مشخصات قبلا ثبت نام کرد است'
+                    )
+                    return redirect(reverse('Authorizations'))
+
+            else :
+                messages.error(
+                    request,
+                    form.errors
+                )
+
+                return redirect(reverse('Authorizations'))
+
+
+
+
+            # return user for login page to login and conform his account 
+            return redirect(reverse('Authorizations'))
+        
         else :
-            pass
-
-
-        # validate the password 
-        # try: 
-        #     validate_password(password=password)
-        # except : 
-        #     # todo : add some massage
-        #     return redirect(reverse('Authorizations'))
-
-
-        # check if user is not exist
-        user = User.objects.filter(email=email).exists()
-        
-        # create  user if is not exist            
-        if not user :
-            User.objects.create_user(
-                email=email,
-                password=password
+            # send the user for the dashboard page if login 
+            messages.warning(
+                request,
+                'شما وارد سایت هستید'
             )
-        
-        # todo : send email to conform
-    
-        # return user for login page to login and conform his account 
-        return redirect(reverse('Authorizations'))
-    
+            return redirect(reverse('Dashboard'))
 

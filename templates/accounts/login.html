@@ -69,10 +69,22 @@
     <div class="login-area">
         <div class="container">
             <div class="row">
+
+                
+                {% if messages %}
+
+                        {% for message in messages %}
+                            <div class='alert {% if message.tags == "error" %} alert-danger {% else %} alert-{{message.tags}}  {% endif %}'> 
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                {% endif %}
+
                 <div class="col-lg-6 col-md-12 mr-10">
                     <div class="login-form">
                         <div class="section-title">
-                            <h2>Login</h2>
+                            <h2>ورود</h2>
                         </div>
                         <div class="card">
                             <div class="card-body">
@@ -105,23 +117,26 @@
                 <div class="col-lg-6 col-md-12 ml-10">
                     <div class="register-form">
                         <div class="section-title">
-                            <h2>Registration</h2>
+                            <h2>ثبت نام</h2>
                         </div>
                         <div class="card">
                             <div class="card-body">
-                                <form method='post' action='{% url "Registrations" %}' >
+                                <form method='POST' action='{% url "Registrations" %}' >
                                     {% csrf_token %}
                                     <div class="form">
                                        {{ RegistrationForm.email }}
+                                       {{ RegistrationForm.email.errors }}
                                     </div>
                                     <div class="form">
                                         <div class="password-input">
                                             {{ RegistrationForm.password }}
+                                            {{ RegistrationForm.password.errors }}
                                         </div>
                                     </div>
                                     <div class="form">
                                         <div class="password-input">
                                             {{ RegistrationForm.conform_password }}
+                                            {{ RegistrationForm.conform_password.errors }}
                                         </div>
                                     </div>
                                     <div class="form">
