@@ -9,12 +9,34 @@ User = get_user_model()
 
 
 class LoginForm(forms.Form):
-    pass
+    """ 
+    login form 
+    """
+    
+    # email field
+    email= forms.EmailField( 
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'id':"username",
+                'placeholder':'ایمیل خود را وارد کنید'
+            }
+    ), required=True)
+
+    # password field
+    password= forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'id': 'password',
+                'placeholder': 'لطفا رمز عبور خود را وارد کنید '
+
+        }), required=True)
 
 
 class RegistrationForm(forms.Form):
     """
-    register model form 
+    register  form 
     """
 
     # email field
@@ -33,7 +55,7 @@ class RegistrationForm(forms.Form):
             attrs={
                 'class': 'form-control',
                 'id': 'password',
-                'placeholder': 'لطفا رمز عبور خود را وارد کنید ...'
+                'placeholder': 'لطفا رمز عبور خود را وارد کنید '
 
         }), required=True)
 
@@ -60,6 +82,8 @@ class RegistrationForm(forms.Form):
 
 
     def clean_password(self):
+        # validate the password 
+
         password = self.cleaned_data.get("password")
 
         try:
