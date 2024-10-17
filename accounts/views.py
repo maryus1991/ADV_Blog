@@ -13,7 +13,10 @@ from django.shortcuts import get_object_or_404, render
 from datetime import datetime
 
 from .models import User
-from .forms import RegistrationForm, LoginForm, ChangePasswordForm, SendMail_EmailField
+from .forms import (RegistrationForm, LoginForm, ChangePasswordForm, 
+                    SendMail_EmailField, UpdateProfileForm, UpdateEmailForm,
+                    UserSetPasswordForm, ChangePasswordForm
+                    )
 
 
 
@@ -22,6 +25,26 @@ class Dashboard(LoginRequiredMixin, TemplateView):
     dashboard page
     """
     template_name = 'accounts/account.html'
+
+    def get_context_data(self, **kwargs) :
+        # setting the form in context data
+        context = super().get_context_data(**kwargs)
+
+        # getting the user
+        context["User"] = self.request.user 
+
+        # updating user info  
+        context['UpdateProfileForm'] = UpdateProfileForm(instance=self.request.user)
+
+        # updating user email
+        context['UpdateEmailForm'] = UpdateEmailForm(initial={
+                                    'email': self.request.user.email})
+
+        # change password from dashboard
+        context['UserSetPasswordForm'] = UserSetPasswordForm ()
+        context['ChangePasswordForm'] = ChangePasswordForm ()
+        return context
+    
 
 
 class Authorizations(TemplateView):
@@ -296,12 +319,6 @@ class ConformAccount(RedirectView):
         return reverse('Authorizations')
 
 
-class ResentEmail():pass
-
-
-class UpdateProfile():pass
-
-
 class ForgotPassword(View):
     """
     template view for forgot pass send email 
@@ -443,3 +460,12 @@ class ForgotPassword_Token(View):
             
 
 class ChangePassword():pass
+
+
+class ChangeEmail():pass
+
+
+class ResentEmail():pass
+
+
+class UpdateProfile():pass

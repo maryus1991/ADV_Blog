@@ -36,8 +36,8 @@ class Command(BaseCommand):
             # for create posts
             post = Post.objects.create(
                 author = user[0],
-                image='assets/images/featured/img-1.jpg',
-                image2='assets/images/featured/img-1.jpg',
+                image= 'assets\images\\featured\\featured\img-1.jpg',
+                image2='assets\images\\featured\\featured\img-1.jpg',
                 title = faker.paragraph(1),
                 text = faker.paragraph(10),
                 text2 = faker.paragraph(10),

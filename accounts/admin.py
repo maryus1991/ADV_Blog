@@ -43,7 +43,8 @@ class CustomUserAdmin(UserAdmin):
                 'password',
                 'first_name'
                 ,'last_name',
-                'verified_code'
+                'verified_code',
+                'avatar',
         )
         })
         ,('Permissions', {
