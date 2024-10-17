@@ -1,0 +1,71 @@
+
+{% extends "layouts/Base.html" %}
+
+
+{% block breadcrumbs_title %}
+    حساب کاربری
+{% endblock breadcrumbs_title %}  
+
+{% block breadcrumbs_contents %}
+    <li>
+        <a class="home-page-link" href="{% url 'PostsListsViews' %}"> 
+            صفحه اصلی
+            <i class="fal fa-angle-right"></i>
+         </a>
+    </li>
+
+    <li>
+        <a class='home-page-link' href="{% url 'Dashboard' %}">
+            حساب کاربری
+            <i class="fal fa-angle-right"></i>
+
+        </a>
+
+    </li>
+    <li>
+        <a class='current-page' href="{% url 'ForgotPassword' %}">
+            ارسال دوباره ایمیل
+
+        </a>
+
+    </li>
+
+{% endblock breadcrumbs_contents %}
+
+{% block title %}
+ارسال دوباره ایمیل فعال سازی حساب کاربری 
+{% endblock title %}
+
+{% block content %}
+
+<div class="col-lg-12 col-md-12 mr-10">
+    <br>
+    <div class="login-form">
+
+        <div class="card">
+            <div class="card-body">
+                <div class="section-title">
+                    <h2>
+                        
+                        ارسال دوباره ایمیل فعال سازی حساب کاربری 
+                    </h2>
+                </div>
+                <form  method="POST">
+                    {% csrf_token %}
+
+                    <div class="form">
+                        {{ UpdateEmailForm.email }}
+                    </div>
+
+
+                    <div class="form">
+                        <button type="submit" class="btn">ارسال</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

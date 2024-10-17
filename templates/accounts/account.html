@@ -125,7 +125,7 @@
                         </button>
                     </form>
                 </div>
-                <div class="account-main-area">
+                <div class="account-main-area col-md-12">
                     <div class="account-main dashboard filterd-items">
                         <div class="account-profile-area">
                             <div class="profile-dp"><img src=" {% if user.avatar %} {{ user.avatar.url }} {% else %} /assets/images/blog/img-13.jpg {% endif %} " width="60px" height="60px" alt="profile-dp"></div>
@@ -135,8 +135,7 @@
                             </div>
                         </div>
                         <p> 
-                                From your account dashboard you can view your recent orders, manage your shipping and billing
-                                addresses, and edit your password and account details.
+                            ویرایش و دیدن اطلاعات خود در این بخش هست
                         </p>
 
                         <div class="col-lg-12 col-md-12 ">
@@ -147,7 +146,7 @@
                                 </div>
                                 <div class="card">
                                     <div class="card-body">
-                                        <form action="" method="post">
+                                        <form action="{% url 'UpdateProfile' %}" method="post" enctype="multipart/form-data">
                                             {% csrf_token %}
 
                                             <div class="form">
@@ -175,7 +174,7 @@
                                 </div>
                                 <div class="card">
                                     <div class="card-body">
-                                        <form action="" method="post">
+                                        <form action="{% url 'ChangeEmail' %}" method="post">
                                             {% csrf_token %}
 
                                             <div class="form">
@@ -191,14 +190,13 @@
 
                             <br>
 
-
                             <div class="login-form">
                                 <div class="section-title">
                                     <h2>ویرایش  رمز عبور</h2>
                                 </div>
                                 <div class="card">
                                     <div class="card-body">
-                                        <form action="" method="post">
+                                        <form action="{% url 'ChangePassword' %}" method="post">
                                             {% csrf_token %}
 
                                             <div class="form">

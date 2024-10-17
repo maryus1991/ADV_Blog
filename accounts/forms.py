@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
+from django.utils.crypto import get_random_string
 
 User = get_user_model()
 
@@ -175,7 +176,7 @@ class UpdateProfileForm(forms.ModelForm):
         widget=forms.FileInput(attrs={
         'class': 'form-control',
         'id':"username",}
-        )
+        ), required=False
     )
 
     # setting and cufigoring the model form
@@ -199,6 +200,13 @@ class UpdateProfileForm(forms.ModelForm):
             )
             
         }
+    
+    def clean_avatar(self):
+        avatar = self.cleaned_data['avatar']
+        if avatar is None:
+            return avatar
+        avatar.name = get_random_string(100)
+        return avatar
 
 class UpdateEmailForm(forms.Form):
     """

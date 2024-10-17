@@ -46,7 +46,6 @@ class Dashboard(LoginRequiredMixin, TemplateView):
         return context
     
 
-
 class Authorizations(TemplateView):
     """
     login and register page 
@@ -193,6 +192,10 @@ class Login(View):
                                     user.verified_code = get_random_string(255)
                                     user.save()
                                     login(request, user)
+                                    messages.success(
+                                        request,
+                                        'خوش امدید'
+                                    )
                                     return redirect(reverse('Dashboard'))
                                 else:
                                     messages.error(
@@ -315,6 +318,11 @@ class ConformAccount(RedirectView):
         user.verified_code = get_random_string(255)
         user.save()
 
+        # adding message
+        messages.success(
+            self.request,
+            'حساب شما با موفقیت فعال شد'
+        )
         # send the user to login page
         return reverse('Authorizations')
 
@@ -459,13 +467,245 @@ class ForgotPassword_Token(View):
             return redirect(reverse('ForgotPassword_token', kwargs={'token': token}))
             
 
-class ChangePassword():pass
+class ChangePassword(LoginRequiredMixin, RedirectView):
+    """
+    redirect view for changing the password and return to dashboard page
+    """
+    def get_redirect_url(self,  *args, **kwargs):
+        # getting request and forms
+        request = self.request
+
+        # get the current password from user
+        current_password_form = UserSetPasswordForm(request.POST)
+
+        # get the new password from user
+        password= ChangePasswordForm(request.POST)
+
+        # getting the user 
+        user = get_object_or_404(User, pk= request.user.pk) 
+
+        # current_password validations form
+        if current_password_form.is_valid():
+
+            # get the password
+            current_password = current_password_form.cleaned_data.get('current_password')
+
+            # checking the password
+            if user.check_password(current_password):
+                
+                # validating the new password form 
+                if password.is_valid():
+                    
+                    # the new password 
+                    new_password = password.cleaned_data.get('password')
+                    
+                    # checking the password is not the same
+                    if current_password == new_password:
+                        messages.error(request,
+                            'رمز های عبور های شما یکسان هستند'
+                        )
+                        return reverse('Dashboard')
+
+                    # set and save ew password for user and send message and redirect for user
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(
+                        request,
+                        'رمز عبور شما با موفقیت تغییر یافت'
+                    )
+                    return reverse('Dashboard')
+
+                else:
+                    # setting form invalid message
+                    messages.error(
+                        request,
+                        password.errors
+                    )
+                    return reverse('Dashboard')
+                
+            else:
+                # setting message for wrong pass
+                messages.error(
+                    request,
+                    'رمز عبور شما اشتباه است'
+                )
+                return reverse('Dashboard')
 
 
-class ChangeEmail():pass
+        else:
+            # invalid error set
+            messages.error(
+                request,
+                current_password_form.errors
+            )
+            return reverse('Dashboard')
+        
+        return reverse('Dashboard')
 
 
-class ResentEmail():pass
+class ChangeEmail(LoginRequiredMixin, RedirectView):
+    """
+    getting and conforming and set the new email for user
+    """
+    def get_redirect_url(self, *args, **kwargs):
+        # getting request
+        request = self.request
+
+        # get email and form and validate it 
+        email_form = UpdateEmailForm(request.POST)
+        if email_form.is_valid():
+            
+            # getting new email
+            email = email_form.cleaned_data.get('email')
+
+            # checking if emails are same
+            if email == request.user.email:
+                messages.error(
+                    request,
+                    'ایمل جدید با ایمیل قبلیتان یکسان هستن'
+                )
+                return reverse('Dashboard')
+            
+            # checking the email is unique  
+            exist_user = User.objects.filter(email=email).exists
+            if not exist_user :
+
+                # setting message and redirect user to forgot pass page
+                messages.error(
+                    request,
+                    'این ایمیل وجود دارد'
+                )
+                return reverse('Dashboard')
+            
+            # get user 
+            user = get_object_or_404(User, id=request.user.id)
+
+            # get and set to user db and send to user email the verified_code
+            verified_code = get_random_string(255)
+
+            # set email and set un verified the account 
+            user.is_verified = False
+            user.email = email
+            user.updated_at = datetime.now()
+            user.verified_code = verified_code
+            user.save()
+
+            # set message and send email
+            messages.success(
+                request,
+                'ایمیل شما با موفقیت تغییر سافت و  یک ایمیل برای شما ارسال شد لطفا اول ایمیل را تایید و سپس وارد سایت شوید'
+            )
+            # todo send email
+
+            # logout the user and sent it to login again
+            logout(request)
+            return reverse('Authorizations')
+
+        else:
+            messages.error(
+                request,
+                email_form.errors
+            )
 
 
-class UpdateProfile():pass
+        return reverse('Dashboard')
+
+
+class UpdateProfile(LoginRequiredMixin, RedirectView):
+    """
+    getting user info from form and update them 
+    """
+    def get_redirect_url(self, *args, **kwargs):
+        #getting request 
+        request = self.request
+
+        # getting user 
+        user = get_object_or_404(User, id=request.user.id)
+
+        # getting form and validate it and save it
+        form = UpdateProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            
+            # getting info and save
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            avatar = form.cleaned_data.get('avatar')
+
+            # save the new info for user
+            user.first_name = first_name
+            user.last_name = last_name
+            user.avatar = avatar
+            user.updated_at = datetime.now()
+            user.save()
+            
+            # add message and redirect user to dashboard page
+            messages.success(
+                request,
+                'اطلاعات شما با موفقیت بروزرسانی شد'
+            )
+            return reverse('Dashboard')
+
+        else:
+            # set invalid messages
+            messages.error(
+                request,
+                form.errors
+            )
+            return reverse('Dashboard')
+        return reverse('Dashboard')
+
+
+class ResentEmail(View):
+    '''
+    for resent email if email is exist 
+    '''
+    def get(self, request, *args, **kwargs):
+        """
+        for set the email form 
+        """
+        return render(request, 'accounts/ResentEmail.html', {'UpdateEmailForm':UpdateEmailForm})
+
+    def post(self, request, *args, **kwargs):
+        """
+        post method and def for resent the email
+        """
+
+        # get the form and email
+        email_form = UpdateEmailForm(request.POST)
+        
+        # email form validations
+        if email_form.is_valid():
+
+            # getting email from form
+            email = email_form.cleaned_data.get('email')
+
+            # get user
+            user = User.objects.filter(email=email).first()
+            
+            # check user is exist 
+            if user is None:
+                messages.error(
+                    request, 
+                    'کاربر یافت نشد'
+                )
+                return  redirect(reverse('ResentEmail'))
+            
+            # get the verfied code 
+            verify_code = user.verified_code
+
+            # todo sent email
+
+            # set message and redirect th user
+            messages.success(
+                    request, 
+                    f'لینک فعال سازی برای این ایمیل ( {user.email} ) ارسال شد'
+                )
+            return  redirect(reverse('ResentEmail'))
+
+        else:
+            # set invalid error message
+            messages.error(
+                request,
+                email_form.errors
+            ) 
+            return  redirect(reverse('ResentEmail'))
