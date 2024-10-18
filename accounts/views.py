@@ -631,10 +631,16 @@ class UpdateProfile(LoginRequiredMixin, RedirectView):
             last_name = form.cleaned_data.get('last_name')
             avatar = form.cleaned_data.get('avatar')
 
+            
+
             # save the new info for user
             user.first_name = first_name
             user.last_name = last_name
-            user.avatar = avatar
+            
+            # setting if avatar is not None can be set
+            if avatar is not None:
+                user.avatar = avatar
+                
             user.updated_at = datetime.now()
             user.save()
             
