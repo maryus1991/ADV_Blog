@@ -61,10 +61,10 @@ CKEDITOR_UPLOAD_PATH = "ckeditor/"
 
 # CKEDITOR_JQUERY_URL =  '/assets/js/vendors/jquery-3.6.0.min.js' 
 CKEDITOR_CONFIGS = {
-    # 'default':{
-    #     # 'toolbar': 'full',
+    'default':{
+        'toolbar': 'full',
         
-    # }
+    }
 }
 
 AUTH_USER_MODEL='accounts.User'
