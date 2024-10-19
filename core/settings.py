@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from django.utils.crypto import get_random_string
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,12 +47,25 @@ INSTALLED_APPS = [
 
     # installed app
     'django_render_partial',
+    'ckeditor',
+    'ckeditor_uploader',
 
     # created app
     'blog',
     'accounts',
     'SiteSetting'
 ]
+
+# ckeditor config
+CKEDITOR_UPLOAD_PATH = "ckeditor/"
+
+# CKEDITOR_JQUERY_URL =  '/assets/js/vendors/jquery-3.6.0.min.js' 
+CKEDITOR_CONFIGS = {
+    # 'default':{
+    #     # 'toolbar': 'full',
+        
+    # }
+}
 
 AUTH_USER_MODEL='accounts.User'
 

@@ -1,4 +1,5 @@
 from django import forms
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from .models import PostsComment
 
 class CommentModelForm(forms.Form):
@@ -10,7 +11,7 @@ class CommentModelForm(forms.Form):
         'placeholder':"Type Your E-mail...",
         "id": 'validationDefault03'
     }))
-    comment = forms.CharField(widget=forms.Textarea(attrs={
+    comment = forms.CharField(widget=CKEditorUploadingWidget(attrs={
         'name': 'comment', 
         'placeholder':"Type Your Comments...",
         "id": 'validationDefault01', 

@@ -140,7 +140,9 @@
                                                             </div>
                                                         </div>
                                                         <p class="description">
-                                                            {{ comment.comment }}
+                                                            {% autoescape off %}
+                                                                {{ comment.comment }}
+                                                            {% endautoescape  %}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -183,32 +185,28 @@
 
 
                             <div class="comment-form mb-10">
-                                <form id='comment_form' method='post'>
+                                <form id='comment_form' method='post' >
                                     {% csrf_token %}
 
                                     <input type="hidden" id="pid" value="" name="parent" >
                                     <div class="contact-form">
                                         <div class="row">
-                                            <div class="col-lg-6 col-sm-12">
+                                            <div class="col-lg-12 col-sm-12">
                                                 <div class="input-box text-input mb-20">
+                                                    {{ comment_form.media }}
                                                     {{ comment_form.comment }}
-                                                    {% comment %} <textarea name="Message" id="validationDefault01"  cols="30" rows="10"
-                                                        placeholder="Type Your Comments..." required></textarea> {% endcomment %}
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6 col-sm-12">
-                                                <div class="col-lg-12">
+                                            <div class="col-lg-12 col-sm-12">
+
                                                     <div class="input-box mb-20">
                                                         {{ comment_form.full_name }}
-                                                        {% comment %} <input type="text" id="validationDefault02" placeholder="Type Your Name..." required> {% endcomment %}
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-12">
+
                                                     <div class="input-box mail-input mb-20">
-                                                        {% comment %} <input type="emial" id="validationDefault03" placeholder="Type Your E-mail..." required> {% endcomment %}
                                                         {{ comment_form.email }}
                                                     </div>
-                                                </div>
+
 
                                                 <div class="col-12 mb-15">
                                                     <button class="form-btn form-btn4">
