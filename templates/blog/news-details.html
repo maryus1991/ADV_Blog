@@ -77,7 +77,9 @@
                                
                             </div>
                             <p class="description">
-                                {{ post.text }}
+                                {% autoescape off %}
+                                    {{ post.text }}
+                                {% endautoescape  %}    
                             </p>
                             <div class="image-section">
                                 <div class="row">
@@ -102,7 +104,11 @@
                                 </div>
                             </div>
                             <p class="description">
-                                {{ post.text2 }}
+                                {% autoescape off %}
+
+                                    {{ post.text2 }}
+                                {% endautoescape  %}    
+
                             </p>
                         </div>
 

@@ -64,6 +64,10 @@ CKEDITOR_CONFIGS = {
     'default':{
         'toolbar': 'full',
         
+    },
+    'comment':{
+        'skin': 'moono',
+        'toolbar': 'basic',
     }
 }
 
