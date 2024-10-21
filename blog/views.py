@@ -1,11 +1,23 @@
 from django.shortcuts import redirect, render
-from django.views.generic import DetailView, ListView
+from django.urls import reverse
+from django.contrib import messages
+from django.views.generic import DetailView, ListView, RedirectView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post, PostViews, PostsComment
 from django.db.models.aggregates import Count
 from django.db.models import Q
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
+
+import datetime
 from utils.get_ip import get_ip
+
+from .models import PostsComment
+from SiteSetting.models import SiteSetting
 from .forms import CommentModelForm
+
+SiteSetting = SiteSetting.objects.filter(is_active=True).order_by('-id').first
+
 # Create your views here.
 
 class PostsListsViews(ListView):
@@ -41,9 +53,6 @@ class PostsListsViews(ListView):
         else:
             return super().get_queryset()
     
-    
-
-
 
 class PostsDetailViews(DetailView):
     """
@@ -109,7 +118,15 @@ class PostsDetailViews(DetailView):
         view[0].save()
 
         # setting the comment form
-        context['comment_form'] = CommentModelForm
+        if request.user.is_authenticated:
+
+            # send email and full_name if user is login
+            context['comment_form'] = CommentModelForm(initial={
+                'email': request.user.email,
+            })
+        else:
+            context['comment_form'] = CommentModelForm()
+
         
         # adding the most view post
         context['most_view_post'] = Post.objects.order_by('view').annotate(most_view_post_count=Count('view')).all()[:5]
@@ -126,12 +143,76 @@ class PostsDetailViews(DetailView):
         post = Post.objects.annotate(views=Count('view'))
         return post
 
+
+class DeletePostComment(LoginRequiredMixin, RedirectView):
+    '''
+    delete the comment if emails is same with Authenticated user email or user is admin or staff user 
+    '''
+
+    def get_redirect_url(self,  *args, **kwargs):
+        # getting the request and post id
+        request = self.request
+        post_id = kwargs.get('pk')
+
+        # checking the request method 
+        if request.method == 'POST':
+            
+            # get the comment id from the Post method
+            comment_id = request.POST.get('comment_id')
+
+            # check and get the comment if the comment id is not None and exist in db
+            if comment_id is not None:
+                comment = get_object_or_404(PostsComment, id=comment_id)
+
+                # get the user email and comment email
+                comment_email = comment.email
+                user_email = request.user.email
+
+                # check if emails from user and comment are same or is admin or star user
+                if comment_email == user_email or request.user.is_staff or request.user.is_superuser:
+                    
+                    # change the comment to not active  and set message
+                    comment.is_active = False
+                    comment.updated_at = datetime.datetime.now()
+                    comment.save()
+                    messages.success(
+                        request, 
+                        'نظر مورد نظر با موقیت حذف شد'
+                    )
+    
+                else:
+                    messages.error(
+                        request,
+                        'شما اجازه حدف این نظر را ندارید'
+                    )
+            
+            else:
+                messages.error(
+                request,
+                'comment not found'
+            )
+
+        else:
+            messages.error(
+                request,
+                'مشکلی پیش امده است'
+            )
+
+        # get the pk and return the user
+        
+        return reverse('PostsDetailViews', kwargs={'pk': post_id})
+
+
 # render partial for header and footer
 
 def header_render_partial(request):
     # partial render for header  
-    return render(request, 'layouts/Header/Header.html')
+    return render(request, 'layouts/Header/Header.html',
+            {'SiteSetting': SiteSetting}
+        )
 
 def footer_render_partial(request):
     # partial render for footer  
-    return render(request, 'layouts/Footer/Footer.html')
+    return render(request, 'layouts/Footer/Footer.html',
+        {'SiteSetting': SiteSetting}
+    )

@@ -5,9 +5,10 @@
             <div class="row">
                 <div class="col-xl-3 col-md-6 col-sm-6 box-widget-col">
                     <div class="footer-widget footer-box-widget">
-                        <div class="footer-logo"><img src="assets/images/logo1.svg" alt="footer-logo"></div>
-                        <p>Solid is the information & experience
-                            directed at an end-user</p>
+                        <div class="footer-logo"><img src="{{SiteSetting.logo.url}}" width="100px" height="30px" alt="footer-logo"></div>
+                        <p>
+                           {{ SiteSetting.short_about }}
+                        </p>
                         <div class="quick-contact">
                             <div class="phone contact-item">
                                 <div class="icon"><svg xmlns="http://www.w3.org/2000/svg"
@@ -29,8 +30,10 @@
                                     </svg>
                                 </div>
                                 <div class="contact-info">
-                                    <span class="title">Mon - Fri: 9:00-20:00</span>
-                                    <a href="tel:0020500" class="service-time info">0020 500 - CALL - 000</a>
+                                    <span class="title"><a href="tel:{{ SiteSetting.second_number }}" class="service-time info">{{ SiteSetting.second_number }}</a>
+                                    </span>
+                                    <a href="tel:{{ SiteSetting.phone_number }}" class="service-time info">{{ SiteSetting.phone_number }}</a>
+
                                 </div>
                             </div>
                             <div class="email contact-item">
@@ -42,8 +45,10 @@
                                 </div>
                                 <div class="contact-info">
                                     <span class="title">Get Free Support</span>
-                                    <a href="mailto:info@webmail.com"
-                                        class="email-address info">info@webmail.com</a>
+                                    <a href="mailto:{{ SiteSetting.email }}"
+                                        class="email-address info">{{ SiteSetting.email }}</a>
+                                    <a href="mailto:{{ SiteSetting.email2 }}"
+                                        class="email-address info">{{ SiteSetting.email2 }}</a>
                                 </div>
                             </div>
                         </div>
@@ -53,28 +58,27 @@
                 <div class="col-xl-3 col-md-6 col-sm-6 box-widget-col2">
                     <div class="footer-widget">
                         <h3 class="footer-widget-title">About Us</h3>
-                        <p class="widget-text">Elegant pink origami design three type
-                            of dimensional view and decoration co
-                            Great for adding a decorative touch to
-                            any room’s decor.</p>
+                        <p class="widget-text">
+                            {{ SiteSetting.short_about }}
+                        </p>
                     </div>
                 </div>
                 <div class="col-lg-13 col-md-6 col-sm-6 no-gutters">
                     <div class="footer-widget">
                         <h3 class="footer-widget-title">Information</h3>
                         <ul class="widget-items cata-widget">
-                            <li class="widget-list-item"><a href="#0">About US</a></li>
-                            <li class="widget-list-item"><a href="#0">Countact Us</a></li>
-                            <li class="widget-list-item"><a href="">Main Page</a></li>
+                            <li class="widget-list-item"><a href="{% url 'AboutUs' %}">About US</a></li>
+                            <li class="widget-list-item"><a href="{% url 'ContactUS' %}">Countact Us</a></li>
+                            <li class="widget-list-item"><a href="/">Main Page</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-13 col-md-6 col-sm-6 no-gutters">
                     <h3 class="footer-widget-title">My Account</h3>
                     <ul class="footer-widget">
-                        <li class="widget-list-item"><a href="#0">Dashboard</a></li>
-                        <li class="widget-list-item"><a href="#0">Sign In </a></li>
-                        <li class="widget-list-item"><a href="#0">Login</a></li>
+                        <li class="widget-list-item"><a href="{% url 'Dashboard' %}">Dashboard</a></li>
+                        <li class="widget-list-item"><a href="{% url 'Authorizations' %}">Sign In </a></li>
+                        <li class="widget-list-item"><a href="{% url 'Authorizations' %}">Login</a></li>
                     </ul>
                 </div>
                
@@ -85,8 +89,7 @@
     <div class="footer-bottom-area">
         <div class="container">
             <div class="footer-bottom-inner">
-                <span class="copyright">Copyright & Design By <a href="http://reacthemes.com/" class="brand"
-                        target="_blank">Reacthemes</a> -2022</span>
+                <span class="copyright">{{ SiteSetting.copy_right_text }}</span>
             </div>
         </div>
     </div>

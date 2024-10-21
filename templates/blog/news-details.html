@@ -88,7 +88,7 @@
                                             {% if post.image %} 
                                                 <img src="{{ post.image.url }}" width='454px' height='341px' alt="img">
                                             {% else %}
-                                                <img src="assets/images/background/furniture-banner.webp" alt="img">
+                                                <img src="/assets/images/background/furniture-banner.webp" alt="img">
                                             {% endif %}
                                         </div>
                                     </div>
@@ -97,7 +97,7 @@
                                             {% if post.image2 %}
                                                 <img src="{{ post.image2.url }}" width='454px' height='341px' alt="img">
                                             {% else %}
-                                                <img src="assets/images/background/furniture-banner.webp" width='454px' height='341px' alt="img">
+                                                <img src="/assets/images/background/furniture-banner.webp" width='454px' height='341px' alt="img">
                                             {% endif %}
                                         </div>
                                     </div>
@@ -144,6 +144,17 @@
                                                             <div class="button">
                                                                 <a onclick="set_parent({{ comment.id }})"><i class="fal fa-reply"></i> Reply</a>
                                                             </div>
+                                                            
+                                                            {% if request.user.email == comment.email or request.user.is_admin or request.user.is_staff %}
+                                                                <div class="">
+
+                                                                    <form action="{% url 'DeletePostComment' post.id %}" method="post">
+                                                                        {% csrf_token %}
+                                                                        <input type="hidden" name="comment_id" value="{{comment.id}}">
+                                                                        <button type="submit" class=" btn btn-danger" >DELETE</button>
+                                                                    </form>
+                                                                </div>
+                                                            {% endif %}
                                                         </div>
                                                         <p class="description">
                                                             {% autoescape off %}
@@ -172,10 +183,23 @@
                                                                                 {{ sub_comment.updated_at.date }}
                                                                             </a></span>
                                                                     </div>
+                                                                    {% if request.user.email == sub_comment.email or request.user.is_admin or request.user.is_staff %}
+                                                                    <div class="">
+    
+                                                                        <form action="{% url 'DeletePostComment' post.id %}" method="post">
+                                                                            {% csrf_token %}
+                                                                            <input type="hidden" name="comment_id" value="{{sub_comment.id}}">
+                                                                            <button type="submit" class=" btn btn-danger" >DELETE</button>
+                                                                        </form>
+                                                                    </div>
+                                                                {% endif %}
         
                                                                 </div>
                                                                 <p class="description">
-                                                                    {{ sub_comment.comment }}
+                                                                    {% autoescape off %}
+                                                                        {{ sub_comment.comment }}
+                                                                    {% endautoescape  %}
+
                                                                 </p>
                                                             </div>
                                                         </div>

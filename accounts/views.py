@@ -13,7 +13,8 @@ from django.shortcuts import get_object_or_404, render
 from datetime import datetime
 
 from .models import User
-from .forms import (RegistrationForm, LoginForm, ChangePasswordForm, 
+from .forms import (
+                    RegistrationForm, LoginForm, ChangePasswordForm, 
                     SendMail_EmailField, UpdateProfileForm, UpdateEmailForm,
                     UserSetPasswordForm, ChangePasswordForm
                     )
