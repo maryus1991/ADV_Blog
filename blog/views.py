@@ -1,13 +1,14 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib import messages
-from django.views.generic import DetailView, ListView, RedirectView
+from django.views.generic import DetailView, ListView, View, RedirectView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post, PostViews, PostsComment
 from django.db.models.aggregates import Count
 from django.db.models import Q
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 import datetime
 from utils.get_ip import get_ip
@@ -91,9 +92,8 @@ class PostsDetailViews(DetailView):
         # return for the posts
         return redirect(reverse('PostsDetailViews', kwargs={'pk': self.get_object().id}))
 
-
-
     def get_context_data(self, **kwargs):
+
         # getting context and request
         context = super().get_context_data(**kwargs)
         request = self.request
@@ -202,6 +202,86 @@ class DeletePostComment(LoginRequiredMixin, RedirectView):
         
         return reverse('PostsDetailViews', kwargs={'pk': post_id})
 
+
+class EditPostComment(LoginRequiredMixin, View):
+    """
+    for edit the comment if user login with the same email
+    """
+
+    def get(self, request, *args, **kwargs):
+        # for showing a form for editing the comments and use get_object_or_404 for return 404 error if not exist
+        comment = get_object_or_404(PostsComment, id=kwargs.get('pk'))
+
+        # getting user email and check if comment and user email is the same
+        email = request.user.email
+        if email == comment.email:
+            form = CommentModelForm(initial={
+                'full_name': comment.full_name,
+                'comment' : comment.comment, 
+                'email': comment.email
+
+            })
+
+            return render(request, 'blog/editComment.html', {'post': comment.post, 'comment': comment,'comment_form': form})
+
+        else:
+            raise Http404()
+        
+
+    def post(self, request, *args, **kwargs):
+        # get the comment id and get the comment by id
+        comment_id = kwargs.get('pk')
+        comment = PostsComment.objects.filter(id=comment_id).first()
+
+        # get the form data and validate it
+        form = CommentModelForm(request.POST)
+        if form.is_valid():
+
+            # checking the comment is exist
+            if comment is not None:
+                
+                # get the post id and request
+                post_id = comment.post.id
+                
+                # get the user email and check if user email and comment email is same
+                email = request.user.email
+                if email == comment.email:
+                    
+                    # update the comment 
+                    comment.comment = form.cleaned_data.get('comment')
+                    comment.full_name = form.cleaned_data.get('full_name')
+                    comment.updated_at = datetime.datetime.now()
+                    comment.save()
+
+                    # add success message
+                    messages.success(
+                        request, 
+                        'کامنت شما ویرایش شد'
+                    )
+
+                else:
+                    # add error for not same email
+                    messages.error(
+                        request,
+                        'باید ایمیل مورد نظر باید با ایمیل صاحب ایمیل یکسان باشد تا تایید بشود که صاحب ایمیل شما هستید'
+                    )
+                
+            else:
+                # add error for not none error
+                messages.error(
+                    request,
+                    'کامنت پیدا نشد'
+                )
+            
+            
+        else:
+            # add message for errors
+            messages.error(
+                request,
+                form.errors
+            )
+
+        return redirect(reverse('PostsDetailViews', kwargs={'pk': post_id})) 
 
 # render partial for header and footer
 

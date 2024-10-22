@@ -12,6 +12,8 @@ from django.shortcuts import get_object_or_404, render
 
 from datetime import datetime
 
+from blog.models import PostsComment
+
 from .models import User
 from .forms import (
                     RegistrationForm, LoginForm, ChangePasswordForm, 
@@ -584,6 +586,12 @@ class ChangeEmail(LoginRequiredMixin, RedirectView):
             # get and set to user db and send to user email the verified_code
             verified_code = get_random_string(255)
 
+            # change the comment with the last email with the new
+            comments = PostsComment.objects.filter(email=user.email).all()
+            for comment in comments:
+                comment.email = email
+                comment.save()
+
             # set email and set un verified the account 
             user.is_verified = False
             user.email = email
@@ -594,13 +602,14 @@ class ChangeEmail(LoginRequiredMixin, RedirectView):
             # set message and send email
             messages.success(
                 request,
-                'ایمیل شما با موفقیت تغییر سافت و  یک ایمیل برای شما ارسال شد لطفا اول ایمیل را تایید و سپس وارد سایت شوید'
+                'ایمیل شما با موفقیت تغییر یافت و  یک ایمیل برای شما ارسال شد لطفا اول ایمیل را تایید و سپس دوباره وارد سایت شوید'
             )
+            
             # todo send email
 
             # logout the user and sent it to login again
             logout(request)
-            return reverse('Authorizations')
+            return reverse('Dashboard')
 
         else:
             messages.error(
