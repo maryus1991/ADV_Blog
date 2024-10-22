@@ -77,7 +77,9 @@
                                
                             </div>
                             <p class="description">
-                                {{ post.text }}
+                                {% autoescape off %}
+                                    {{ post.text }}
+                                {% endautoescape  %}    
                             </p>
                             <div class="image-section">
                                 <div class="row">
@@ -86,7 +88,7 @@
                                             {% if post.image %} 
                                                 <img src="{{ post.image.url }}" width='454px' height='341px' alt="img">
                                             {% else %}
-                                                <img src="assets/images/background/furniture-banner.webp" alt="img">
+                                                <img src="/assets/images/background/furniture-banner.webp" alt="img">
                                             {% endif %}
                                         </div>
                                     </div>
@@ -95,14 +97,18 @@
                                             {% if post.image2 %}
                                                 <img src="{{ post.image2.url }}" width='454px' height='341px' alt="img">
                                             {% else %}
-                                                <img src="assets/images/background/furniture-banner.webp" width='454px' height='341px' alt="img">
+                                                <img src="/assets/images/background/furniture-banner.webp" width='454px' height='341px' alt="img">
                                             {% endif %}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <p class="description">
-                                {{ post.text2 }}
+                                {% autoescape off %}
+
+                                    {{ post.text2 }}
+                                {% endautoescape  %}    
+
                             </p>
                         </div>
 
@@ -119,96 +125,143 @@
                                     <a><i class="fal fa-comments"></i></a>
                                 </div>
                             </div>
+                            {% if comments %}
+                                {% for comment in comments %}
 
-                            {% for comment in comments %}
-
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="comment-section">
-                                                <div class="comment-text">
-                                                    <div class="text">
-                                                        <div class="section-title">
-                                                            <div class="title">
-                                                                <h2 class="sub-title"><a href='mailto:{{ comment.email }}'>{{ comment.full_name  }}</a></h2>
-                                                                <span class="sect-title"><a><i
-                                                                            class="fal fa-calendar-alt"></i>
-                                                                        {{ comment.updated_at.date }}
-                                                                    </a></span>
-                                                            </div>
-                                                            <div class="button">
-                                                                <a onclick="set_parent({{ comment.id }})"><i class="fal fa-reply"></i> Reply</a>
-                                                            </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="comment-section">
+                                            <div class="comment-text">
+                                                <div class="text">
+                                                    <div class="section-title">
+                                                        <div class="title">
+                                                            <h2 class="sub-title"><a href='mailto:{{ comment.email }}'>{{ comment.full_name  }}</a></h2>
+                                                            <span class="sect-title"><a><i
+                                                                        class="fal fa-calendar-alt"></i>
+                                                                    {{ comment.updated_at.date }}
+                                                                </a></span>
                                                         </div>
-                                                        <p class="description">
-                                                            {{ comment.comment }}
-                                                        </p>
+                                                        <div class="button">
+                                                            <a onclick="set_parent({{ comment.id }})"><i class="fal fa-reply"></i> Reply</a>
+                                                        </div>
+                                                        
+                                                        {% if request.user.email == comment.email or request.user.is_admin or request.user.is_staff %}
+                                                            <div class="">
+
+                                                                <form action="{% url 'DeletePostComment' post.id %}" method="post">
+                                                                    {% csrf_token %}
+                                                                    <input type="hidden" name="comment_id" value="{{comment.id}}">
+                                                                    <button type="submit" class=" btn btn-danger" >DELETE</button>
+                                                                </form>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if request.user.email == comment.email %}
+                                                            <div class="">
+                                                                
+                                                                <form action="{% url 'EditPostComment' comment.id %}" method="get">
+                                                                     <button type="submit" class=" btn btn-success" >EDIT</button>
+                                                                </form>
+                                                                    
+                                                            </div>
+                                                        {% endif %}
                                                     </div>
+                                                    <p class="description">
+                                                        {% autoescape off %}
+                                                            {{ comment.comment }}
+                                                        {% endautoescape  %}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> 
+                                    </div>
+                                </div> 
 
                                     {% for sub_comment in comment.child.all %}
-                                            
-                                            <div class="row">
-                                                <div class="col-lg-4"></div>
-                                                <div class="col-lg-8">
-                                                    <div class="comment-section">
-                                                        <div class="comment-text">
-                                                            <div class="text">
-                                                                <div class="section-title">
-                                                                    <div class="title">
-                                                                        <h2 class="sub-title"><a href='mailto:{{ comment.email }}'>{{ sub_comment.full_name  }}</a></h2>
-                                                                        <span class="sect-title"><a><i
-                                                                                    class="fal fa-calendar-alt"></i>
-                                                                                {{ sub_comment.updated_at.date }}
-                                                                            </a></span>
-                                                                    </div>
-        
+                                        
+                                        <div class="row">
+                                            <div class="col-lg-4"></div>
+                                            <div class="col-lg-8">
+                                                <div class="comment-section">
+                                                    <div class="comment-text">
+                                                        <div class="text">
+                                                            <div class="section-title">
+                                                                <div class="title">
+                                                                    <h2 class="sub-title"><a href='mailto:{{ comment.email }}'>{{ sub_comment.full_name  }}</a></h2>
+                                                                    <span class="sect-title"><a><i
+                                                                                class="fal fa-calendar-alt"></i>
+                                                                            {{ sub_comment.updated_at.date }}
+                                                                        </a></span>
                                                                 </div>
-                                                                <p class="description">
-                                                                    {{ sub_comment.comment }}
-                                                                </p>
+                                                                {% if request.user.email == sub_comment.email or request.user.is_admin or request.user.is_staff %}
+                                                                <div class="">
+
+                                                                    <form action="{% url 'DeletePostComment' post.id %}" method="post">
+                                                                        {% csrf_token %}
+                                                                        <input type="hidden" name="comment_id" value="{{sub_comment.id}}">
+                                                                        <button type="submit" class=" btn btn-danger" >DELETE</button>
+                                                                    </form>
+                                                                </div>
+                                                            {% endif %}
+                                                            {% if request.user.email == sub_comment.email %}
+                                                            <div class="">
+                                                                
+                                                                <form action="{% url 'EditPostComment' sub_comment.id %}" method="get">
+                                                                     <button type="submit" class=" btn btn-success" >EDIT</button>
+                                                                </form>
+                                                                    
                                                             </div>
+                                                            {% endif %}
+
+                                                            </div>
+                                                            <p class="description">
+                                                                {% autoescape off %}
+                                                                    {{ sub_comment.comment }}
+                                                                {% endautoescape  %}
+
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> 
-                                            
-                                        {% endfor %}
-                                <br>
-                                <br>
-                                <br>
-                            {% endfor %}
+                                            </div>
+                                        </div> 
+                                        
+                                    {% endfor %}
+                                        <br>
+                                        <br>
+                                        <br>
+                                {% endfor %}
+                                {% else %}
+                                <div class="alert alert-info">
+                                    اولین نفری باشید که کامنت بزاره
+                                </div>
+                            {% endif %}
 
 
-                            <div class="comment-form mb-10">
-                                <form id='comment_form' method='post'>
+
+                            <div id="comment-form" class="comment-form mb-10">
+                                <form id='comment_form' method='post' >
                                     {% csrf_token %}
-
+                                    
                                     <input type="hidden" id="pid" value="" name="parent" >
+                                    <input type="hidden" id="pid" value="" name="comment_id" >
                                     <div class="contact-form">
                                         <div class="row">
-                                            <div class="col-lg-6 col-sm-12">
+                                            <div class="col-lg-12 col-sm-12">
                                                 <div class="input-box text-input mb-20">
+                                                    {{ comment_form.media }}
                                                     {{ comment_form.comment }}
-                                                    {% comment %} <textarea name="Message" id="validationDefault01"  cols="30" rows="10"
-                                                        placeholder="Type Your Comments..." required></textarea> {% endcomment %}
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6 col-sm-12">
-                                                <div class="col-lg-12">
+                                            <div class="col-lg-12 col-sm-12">
+
                                                     <div class="input-box mb-20">
                                                         {{ comment_form.full_name }}
-                                                        {% comment %} <input type="text" id="validationDefault02" placeholder="Type Your Name..." required> {% endcomment %}
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-12">
+
                                                     <div class="input-box mail-input mb-20">
-                                                        {% comment %} <input type="emial" id="validationDefault03" placeholder="Type Your E-mail..." required> {% endcomment %}
                                                         {{ comment_form.email }}
                                                     </div>
-                                                </div>
+
 
                                                 <div class="col-12 mb-15">
                                                     <button class="form-btn form-btn4">

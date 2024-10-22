@@ -1,9 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
+from django.utils.crypto import get_random_string
 
 User = get_user_model()
 
@@ -110,7 +110,7 @@ class ChangePasswordForm(forms.Form):
             attrs={
                 'class': 'form-control',
                 'id': 'password',
-                'placeholder': 'لطفا رمز عبور خود را وارد کنید '
+                'placeholder': 'لطفا رمز عبور جدید خود را وارد کنید '
 
         }), required=True)
 
@@ -118,7 +118,7 @@ class ChangePasswordForm(forms.Form):
     conform_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
-                'placeholder': 'لطفا رمز عبور را دوباره وارد کنید',
+                'placeholder': 'لطفا رمز عبور جدید را دوباره وارد کنید',
                 'class': 'form-control',
                 'id': 'password'
             }
@@ -166,4 +166,70 @@ class SendMail_EmailField(forms.Form):
             }
     ), required=True)
 
+class UpdateProfileForm(forms.ModelForm):
+
+    '''
+    form for user info update 
+    '''
+    # setting thr avatar part for more customizing
+    avatar = forms.ImageField(
+        widget=forms.FileInput(attrs={
+        'class': 'form-control',
+        'id':"username",}
+        ), required=False
+    )
+
+    # setting and cufigoring the model form
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'avatar')
+        widgets={
+            'first_name': forms.TextInput(
+                attrs={
+                    'placeholder': 'لطفا نام خود را وارد کنید',
+                    'class': 'form-control',
+                    'id':"username",
+                }
+            )
+            ,'last_name': forms.TextInput(
+                attrs={
+                    'placeholder': 'لطفا نام خانوادگی خود را وارد کنید',
+                    'class': 'form-control',
+                    'id':"username",
+                }
+            )
+            
+        }
     
+    def clean_avatar(self):
+        avatar = self.cleaned_data['avatar']
+        if avatar is None:
+            return avatar
+        avatar.name = get_random_string(100)
+        return avatar
+
+class UpdateEmailForm(forms.Form):
+    """
+    updating the user email
+    """
+    email= forms.EmailField( 
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'id':"username",
+                'placeholder':'ایمیل جدید خود را وارد کنید'
+            }
+    ), required=True)
+
+class UserSetPasswordForm(forms.Form):
+    '''
+    for changing user password with out sending email 
+    '''
+    current_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'id': 'password',
+                'placeholder': 'لطفا رمز عبور فعلی خود را وارد کنید '
+
+        }), required=True)

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from ckeditor_uploader.fields import RichTextUploadingField
 User = get_user_model()
 
 
@@ -13,8 +13,8 @@ class Post(models.Model):
     image2  = models.ImageField(upload_to='posts', null=True, blank=True)
 
     title = models.CharField(max_length=255)
-    text = models.TextField()
-    text2 = models.TextField(null=True, blank=True)
+    text = RichTextUploadingField()
+    text2 = RichTextUploadingField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
@@ -51,7 +51,7 @@ class PostsComment(models.Model):
     """
     full_name = models.CharField(max_length=255)
     email = models.EmailField()
-    comment = models.TextField()
+    comment = RichTextUploadingField()
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', related_name='child', on_delete=models.CASCADE, null=True, blank=True)
 

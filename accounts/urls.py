@@ -1,5 +1,9 @@
 from django.urls import path
-from .views import Dashboard, Authorizations, Registrations, Login, Logout, ConformAccount, ForgotPassword, ForgotPassword_Token
+from .views import (Dashboard, Authorizations,
+                     Registrations, Login, Logout, 
+                    ConformAccount, ForgotPassword, 
+                    ForgotPassword_Token, ChangePassword,
+                    ChangeEmail, UpdateProfile, ResentEmail)
 
 urlpatterns = [
     path('', Dashboard.as_view(), name='Dashboard'),
@@ -10,4 +14,8 @@ urlpatterns = [
     path('conform/<token>', ConformAccount.as_view(), name='ConformAccount'),
     path('forgot-password/', ForgotPassword.as_view(), name='ForgotPassword'),
     path('forgot-password/<token>', ForgotPassword_Token.as_view(), name='ForgotPassword_token'),
+    path('change-password', ChangePassword.as_view(), name='ChangePassword'),
+    path('change-email', ChangeEmail.as_view(), name='ChangeEmail'),
+    path('update-profile', UpdateProfile.as_view(), name='UpdateProfile'),
+    path('resent-email', ResentEmail.as_view(), name='ResentEmail'),
 ]

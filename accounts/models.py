@@ -59,7 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     verified_code = models.CharField(max_length=255, default=get_random_string(255))
     verified_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
     first_name = models.CharField(null=True, blank=True, max_length=255)
     last_name = models.CharField(null=True, blank=True, max_length=255)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)

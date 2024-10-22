@@ -18,23 +18,14 @@
                                 <span class="dot9"></span>
                             </a>
                         </div>
-                        {% comment %} <a href="index.html" class="logo"><img src="assets/images/logo1.svg" alt="umart-logo"></a> {% endcomment %}
+                        
                     </div>
                     <div class="rts-menu">
                         <nav class="menus menu-toggle">
                             <ul class="nav__menu">
-                                 <a class="menu-item" href="#">Home </i></a>
-
-                                 
-                                 <a class="menu-item" href="#">Shop </i></a>
-
-                                 
-                                 <a class="menu-item" href="#">Pages </i></a>
-
-                                 
-                                <a class="menu-item" href="#">Blog </i></a> 
-
-                                <li><a class="menu-item" href="contact.html">Contact</a></li>
+                                 <a class="menu-item" href="/">Home </i></a>
+                                <li><a class="menu-item" href="{% url 'ContactUS' %}">Contact</a></li>
+                                <li><a class="menu-item" href="{% url 'AboutUs' %}">About Us</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -63,7 +54,6 @@
                                         <div class="input-div">
                                             <form action="{% url 'PostsListsViews' %}" method="GET">
 
-
                                                         <input id="searchInput1" class="search-input" name="search" type="text"
                                                             placeholder="Search by keyword or #">
                                                         <input type="submit" class="btn btn-success" value="Search">
@@ -75,7 +65,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="login.html" class="account"><i class="rt-user-2"></i></a>
+                        <a href="{% url 'Dashboard' %}" class="account"><i class="rt-user-2"></i></a>
 
                     </div>
                 </div>
@@ -92,29 +82,22 @@
         <div class="offset-sidebar-main">
             <div class="offset-widget mb-40">
                 <div class="info-widget">
-                    <img src="assets/images/logo1.svg" alt="">
+                    <img src="{{ SiteSetting.logo.url }}" width="212px" height="33px" alt="">
                     <p class="mb-30">
-                        We must explain to you how all seds this mistakens idea denouncing pleasures and praising account.
+                       {{ SiteSetting.short_about }}
                     </p>
                 </div>
                 <div class="info-widget info-widget2">
-                    <h4 class="offset-title mb-20">Get In Touch </h4>
+                    <h4 class="offset-title mb-20"> با ما در ارتباط باشید </h4>
                     <ul>
-                        <li class="info phone"><a href="tel:78090790890208806803">780 907 908 90, 208 806 803</a></li>
-                        <li class="info email"><a href="email:info@webmail.com">info@webmail.com</a></li>
-                        <li class="info web"><a href="www.webexample.html">www.webexample.com</a></li>
-                        <li class="info location">13/A, New Pro State, NYC</li>
+                        <li class="info phone"><a href="tel:{{ SiteSetting.phone_number }}">{{ SiteSetting.phone_number }}</a></li>
+                        
+                        <li class="info phone"><a href="tel:{{ SiteSetting.second_number }}">{{ SiteSetting.second_number }}</a></li>
+                        <li class="info email"><a href="email:{{ SiteSetting.email }}">{{ SiteSetting.email }}</a></li>
+                        <li class="info email"><a href="email:{{ SiteSetting.email2 }}">{{ SiteSetting.email2 }}</a></li>
+                        <li class="info location">{{ SiteSetting.short_addr }}</li>
                     </ul>
-                    <div class="offset-social-link">
-                        <h4 class="offset-title mb-20">Follow Us </h4>
-                        <ul class="social-icon">
-                            <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fab fa-youtube"></i></a></li>
-                            <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fab fa-behance"></i></a></li>
-                        </ul>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -123,28 +106,19 @@
         <nav class="side-mobile-menu side-mobile-menu1">
             <ul id="mobile-menu-active">
                 <li >
-                    <a class="mm-link" href="index.html">Home </a>
+                    <a class="mm-link" href="/">Home </a>
 
                 </li>
-                <li >
-                    <a class="mm-link" href="shop.html">Shop </a>
 
-                </li>
-                <li >
-                    <a class="mm-link" href="index.html">Pages </a>
+                <li><a class="menu-item" href="{% url 'ContactUS' %}">Contact</a></li>
+                <li><a class="menu-item" href="{% url 'AboutUs' %}">About Us</a></li>
 
-                </li>
-                <li>
-                    <a class="mm-link" href="news.html">Blog </a>
-
-                </li>
-                <li><a class="mm-link" href="contact.html">Contact</a></li>
             </ul>
         </nav>
         <div class="header-action-items header-action-items1 header-action-items-side">
 
 
-            <a href="login.html" class="account"><i class="rt-user-2"></i></a>
+            <a href="{% url 'Dashboard' %}" class="account"><i class="rt-user-2"></i></a>
         </div>
         <!-- side-mobile-menu end -->
     </aside>

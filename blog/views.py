@@ -1,11 +1,24 @@
 from django.shortcuts import redirect, render
-from django.views.generic import DetailView, ListView
+from django.urls import reverse
+from django.contrib import messages
+from django.views.generic import DetailView, ListView, View, RedirectView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post, PostViews, PostsComment
 from django.db.models.aggregates import Count
 from django.db.models import Q
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
+from django.http import Http404
+
+import datetime
 from utils.get_ip import get_ip
+
+from .models import PostsComment
+from SiteSetting.models import SiteSetting
 from .forms import CommentModelForm
+
+SiteSetting = SiteSetting.objects.filter(is_active=True).order_by('-id').first
+
 # Create your views here.
 
 class PostsListsViews(ListView):
@@ -41,9 +54,6 @@ class PostsListsViews(ListView):
         else:
             return super().get_queryset()
     
-    
-
-
 
 class PostsDetailViews(DetailView):
     """
@@ -82,9 +92,8 @@ class PostsDetailViews(DetailView):
         # return for the posts
         return redirect(reverse('PostsDetailViews', kwargs={'pk': self.get_object().id}))
 
-
-
     def get_context_data(self, **kwargs):
+
         # getting context and request
         context = super().get_context_data(**kwargs)
         request = self.request
@@ -109,7 +118,15 @@ class PostsDetailViews(DetailView):
         view[0].save()
 
         # setting the comment form
-        context['comment_form'] = CommentModelForm
+        if request.user.is_authenticated:
+
+            # send email and full_name if user is login
+            context['comment_form'] = CommentModelForm(initial={
+                'email': request.user.email,
+            })
+        else:
+            context['comment_form'] = CommentModelForm()
+
         
         # adding the most view post
         context['most_view_post'] = Post.objects.order_by('view').annotate(most_view_post_count=Count('view')).all()[:5]
@@ -126,12 +143,156 @@ class PostsDetailViews(DetailView):
         post = Post.objects.annotate(views=Count('view'))
         return post
 
+
+class DeletePostComment(LoginRequiredMixin, RedirectView):
+    '''
+    delete the comment if emails is same with Authenticated user email or user is admin or staff user 
+    '''
+
+    def get_redirect_url(self,  *args, **kwargs):
+        # getting the request and post id
+        request = self.request
+        post_id = kwargs.get('pk')
+
+        # checking the request method 
+        if request.method == 'POST':
+            
+            # get the comment id from the Post method
+            comment_id = request.POST.get('comment_id')
+
+            # check and get the comment if the comment id is not None and exist in db
+            if comment_id is not None:
+                comment = get_object_or_404(PostsComment, id=comment_id)
+
+                # get the user email and comment email
+                comment_email = comment.email
+                user_email = request.user.email
+
+                # check if emails from user and comment are same or is admin or star user
+                if comment_email == user_email or request.user.is_staff or request.user.is_superuser:
+                    
+                    # change the comment to not active  and set message
+                    comment.is_active = False
+                    comment.updated_at = datetime.datetime.now()
+                    comment.save()
+                    messages.success(
+                        request, 
+                        'نظر مورد نظر با موقیت حذف شد'
+                    )
+    
+                else:
+                    messages.error(
+                        request,
+                        'شما اجازه حدف این نظر را ندارید'
+                    )
+            
+            else:
+                messages.error(
+                request,
+                'comment not found'
+            )
+
+        else:
+            messages.error(
+                request,
+                'مشکلی پیش امده است'
+            )
+
+        # get the pk and return the user
+        
+        return reverse('PostsDetailViews', kwargs={'pk': post_id})
+
+
+class EditPostComment(LoginRequiredMixin, View):
+    """
+    for edit the comment if user login with the same email
+    """
+
+    def get(self, request, *args, **kwargs):
+        # for showing a form for editing the comments and use get_object_or_404 for return 404 error if not exist
+        comment = get_object_or_404(PostsComment, id=kwargs.get('pk'))
+
+        # getting user email and check if comment and user email is the same
+        email = request.user.email
+        if email == comment.email:
+            form = CommentModelForm(initial={
+                'full_name': comment.full_name,
+                'comment' : comment.comment, 
+                'email': comment.email
+
+            })
+
+            return render(request, 'blog/editComment.html', {'post': comment.post, 'comment': comment,'comment_form': form})
+
+        else:
+            raise Http404()
+        
+
+    def post(self, request, *args, **kwargs):
+        # get the comment id and get the comment by id
+        comment_id = kwargs.get('pk')
+        comment = PostsComment.objects.filter(id=comment_id).first()
+
+        # get the form data and validate it
+        form = CommentModelForm(request.POST)
+        if form.is_valid():
+
+            # checking the comment is exist
+            if comment is not None:
+                
+                # get the post id and request
+                post_id = comment.post.id
+                
+                # get the user email and check if user email and comment email is same
+                email = request.user.email
+                if email == comment.email:
+                    
+                    # update the comment 
+                    comment.comment = form.cleaned_data.get('comment')
+                    comment.full_name = form.cleaned_data.get('full_name')
+                    comment.updated_at = datetime.datetime.now()
+                    comment.save()
+
+                    # add success message
+                    messages.success(
+                        request, 
+                        'کامنت شما ویرایش شد'
+                    )
+
+                else:
+                    # add error for not same email
+                    messages.error(
+                        request,
+                        'باید ایمیل مورد نظر باید با ایمیل صاحب ایمیل یکسان باشد تا تایید بشود که صاحب ایمیل شما هستید'
+                    )
+                
+            else:
+                # add error for not none error
+                messages.error(
+                    request,
+                    'کامنت پیدا نشد'
+                )
+            
+            
+        else:
+            # add message for errors
+            messages.error(
+                request,
+                form.errors
+            )
+
+        return redirect(reverse('PostsDetailViews', kwargs={'pk': post_id})) 
+
 # render partial for header and footer
 
 def header_render_partial(request):
     # partial render for header  
-    return render(request, 'layouts/Header/Header.html')
+    return render(request, 'layouts/Header/Header.html',
+            {'SiteSetting': SiteSetting}
+        )
 
 def footer_render_partial(request):
     # partial render for footer  
-    return render(request, 'layouts/Footer/Footer.html')
+    return render(request, 'layouts/Footer/Footer.html',
+        {'SiteSetting': SiteSetting}
+    )
