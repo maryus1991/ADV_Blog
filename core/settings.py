@@ -49,12 +49,20 @@ INSTALLED_APPS = [
     'django_render_partial',
     'ckeditor',
     'ckeditor_uploader',
+    'drf_yasg',
+    'rest_framework',
+    'django_filters',
 
     # created app
     'blog',
     'accounts',
     'SiteSetting'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20
+}
 
 # ckeditor config
 CKEDITOR_UPLOAD_PATH = "ckeditor/"
