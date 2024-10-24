@@ -5,15 +5,15 @@ from rest_framework import filters
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 
-from blog.models import Post
+from blog.models import Post, PostsComment
 import datetime
 
-from .serializers import PostModelSerializer
+from .serializers import PostModelSerializer, PostsCommentModelSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
 class PostModelViewSet(ModelViewSet):
-    # set model view set for post modek
+    # set model view set for post model
     
     # set the permission class that for post owner user or read only for other users
     permission_classes = [IsOwnerOrReadOnly]
@@ -33,7 +33,6 @@ class PostModelViewSet(ModelViewSet):
     # set the query and filter it for is activated posts
     queryset = Post.objects.filter(is_active=True).order_by('-id').all()
 
-
     def destroy(self, request, *args, **kwargs):
         """
         delete object if the user ad admin or staff user and his email is the same with author email
@@ -49,3 +48,13 @@ class PostModelViewSet(ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise AuthenticationFailed('Your are not allowed to delete ')
+
+class PostCommentModelViewSet(ModelViewSet):
+    # permission_classes = [IsOwnerOrReadOnly]
+    serializer_class = PostsCommentModelSerializer
+
+    def get_queryset(self):
+        post_id = self.kwargs.get('post_id')
+        print(post_id)
+        return PostsComment.objects.filter(post_id=post_id).order_by('-id').all()
+    

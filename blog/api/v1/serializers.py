@@ -26,7 +26,7 @@ class PostsCommentModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostsComment
         exclude = ['is_active']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'post', 'parent']
 
 
 class PostModelSerializer(serializers.ModelSerializer):
@@ -72,15 +72,15 @@ class PostModelSerializer(serializers.ModelSerializer):
                         # ...
                 #       sub comments
                         # ...
-                # ]
-                #    }
+                #   ]
+                #  }
                 
                 # set the the serialize data  of sub_comment at child field of parent comment  and set the result in comment_list 
                 result['child'] = [PostsCommentModelSerializer(sub_comment).data for sub_comment in comment.child.all()]
-                comment_dict.append(result)
+                comment_list.append(result)
 
             # send the serialized data of comments with representation
-            representation['comments'] = comment_dict 
+            representation['comments'] = comment_list 
         else:
             # if user see the list view he will got the post link for see the detail of the post
             representation['post_link'] = reverse('post-detail', kwargs={'pk': instance.id})
