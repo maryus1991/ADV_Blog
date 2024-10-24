@@ -26,8 +26,8 @@ class PostsCommentModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostsComment
         exclude = ['is_active']
-        read_only_fields = ['id', 'post', 'parent']
-
+        read_only_fields = ['id', 'post']
+    
 
 class PostModelSerializer(serializers.ModelSerializer):
     """
@@ -60,7 +60,7 @@ class PostModelSerializer(serializers.ModelSerializer):
             for comment in parent_comments:
 
                 # get the serialized data of comment 
-                result = PostsCommentModelSerializer(comment).data
+                result = PostsCommentModelSerializer(comment, context={'request': request}).data
 
                 # set the child of comment with child section in parent comment
                 # the result most be like this 
@@ -76,7 +76,7 @@ class PostModelSerializer(serializers.ModelSerializer):
                 #  }
                 
                 # set the the serialize data  of sub_comment at child field of parent comment  and set the result in comment_list 
-                result['child'] = [PostsCommentModelSerializer(sub_comment).data for sub_comment in comment.child.all()]
+                result['child'] = [PostsCommentModelSerializer(sub_comment, context={'request': request}).data for sub_comment in comment.child.all()]
                 comment_list.append(result)
 
             # send the serialized data of comments with representation
