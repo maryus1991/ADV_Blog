@@ -27,7 +27,7 @@ class PostsCommentModelSerializer(serializers.ModelSerializer):
         model = PostsComment
         exclude = ['is_active']
         read_only_fields = ['id', 'post']
-    
+
 
 class PostModelSerializer(serializers.ModelSerializer):
     """

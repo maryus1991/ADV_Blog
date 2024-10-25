@@ -38,7 +38,7 @@ class PostModelViewSet(ModelViewSet):
         """
         delete object if the user ad admin or staff user and his email is the same with author email
         """
-        print()
+
         instance = self.get_object()
         if request.user.is_superuser or ( request.user.is_staff and instance.author.email == request.user.email ):
 
@@ -51,7 +51,6 @@ class PostModelViewSet(ModelViewSet):
             raise AuthenticationFailed('Your are not allowed to delete ')
 
 class PostCommentModelViewSet(ModelViewSet):
-    # permission_classes = [IsOwnerOrReadOnly]
 
     # set the serializer class
     serializer_class = PostsCommentModelSerializer
@@ -63,7 +62,6 @@ class PostCommentModelViewSet(ModelViewSet):
         post_id = self.kwargs.get('post_id')
         return PostsComment.objects.filter(post_id=post_id).order_by('-id').all()
     
-
     def create(self, request, *args, **kwargs):
         """
         overwintering the create method to fixing the error
@@ -86,23 +84,24 @@ class PostCommentModelViewSet(ModelViewSet):
                     # getting the post id
                     post_id = kwargs.get('post_id')
                     
+                    print(parent)
 
-                    # convert the parent to int and return error if can not convert it 
+                    # convert the parent to int or set null value
                     try:
                         parent = int(parent)
                     except:
-                        return Response('your parent id is not Found able', status=status.HTTP_406_NOT_ACCEPTABLE)
-
+                        parent = None
 
                     # add controller for parent id 
                     if parent == '' or parent == 0 or parent is None :
                         # find and set the None value for parent 
                         parent = None
                     else:
+
                         # check if the parent is ok 
                         if PostsComment.objects.filter(post_id=post_id, id=parent).first() is None:
                             # set error if parent comment is not find able 
-                            return Response('your parent is not find able', status=status.HTTP_406_NOT_ACCEPTABLE)
+                            return Response(f'your parent is not find able', status=status.HTTP_406_NOT_ACCEPTABLE)
                         
 
                     # create the object 
@@ -128,3 +127,110 @@ class PostCommentModelViewSet(ModelViewSet):
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        """
+        overwrite update method for fixing the errors
+        for edit a comment the user should be login with same comment email
+        """
+
+        # set error for noo authorize user
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        # get the post id and comment id 
+        comment_id = kwargs.get('pk')
+        post_id = kwargs.get('post_id')
+
+        # get the request data 
+        data = request.data
+
+        # get the values
+        full_name, email , comment = data.get('full_name'), data.get('email') ,data.get('comment')
+
+        # check if values if not None and not empty string
+        if full_name is not None and email is not None and comment is not None:
+            if full_name != ' ' and email != ' ' and comment != ' ':
+
+                # get object from db if exists
+                comment = PostsComment.objects.filter(post_id=post_id, id=comment_id).first()
+
+                # check if exist
+                if comment is not None:
+                    
+                    # checking and getting the user 
+                    user = request.user
+
+                    # check the user
+                    if user is not None and request.user.is_authenticated:
+                        
+                        # check if user email is the same with comment email
+                        if user.email == comment.email:
+                            
+                            # update the object and return 201 status
+                            comment.full_name = full_name
+                            comment.comment = comment
+                            comment.updated_at = datetime.datetime.now()
+                            comment.save()
+                            
+                            return Response(status=status.HTTP_202_ACCEPTED)
+                            
+                        else:
+                            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+                    else:
+                        # set error 
+                        return Response(status=status.HTTP_401_UNAUTHORIZED)
+                    
+
+                else:
+                    # not exits error 
+                    return Response(status=status.HTTP_404_NOT_FOUND)
+                
+            else:
+                # setting error for empty string 
+                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        else: 
+            # setting error for None value
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        overwriting the destroy method for detaching who can delete the comment  
+        """
+        
+
+        # set error for noo authorize user
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        # get the post id and comment id 
+        comment_id = kwargs.get('pk')
+        post_id = kwargs.get('post_id')
+
+        # get the user 
+        user = request.user
+
+        # getting and checking the object
+        comment = PostsComment.objects.filter(id=comment_id, post_id = post_id ).first()
+
+        if comment is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        """
+        checking the user that just the comment owner or admin user can delete the comment 
+        """
+        if user.is_superuser or (comment.email == user.email):
+            
+            # deactivate the objects
+            comment.is_active = False
+            comment.updated_at = datetime.datetime.now()
+            comment.save()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
