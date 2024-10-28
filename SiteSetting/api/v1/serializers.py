@@ -8,7 +8,8 @@ class ContactModelSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Contact
-        read_only_fields = ['id']
+        fields = '__all__'
+        read_only_fields = ['id', 'is_read_by_admin']
 
 
 class SiteSettingModelSerializer(serializers.ModelSerializer):
@@ -17,4 +18,5 @@ class SiteSettingModelSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = SiteSetting
+        fields = '__all__'
         read_only_fields = ['id']
