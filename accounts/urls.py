@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (Dashboard, Authorizations,
                      Registrations, Login, Logout, 
                     ConformAccount, ForgotPassword, 
@@ -18,4 +18,5 @@ urlpatterns = [
     path('change-email', ChangeEmail.as_view(), name='ChangeEmail'),
     path('update-profile', UpdateProfile.as_view(), name='UpdateProfile'),
     path('resent-email', ResentEmail.as_view(), name='ResentEmail'),
+    path('api/v1/', include('accounts.api.v1.urls'))
 ]
