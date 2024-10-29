@@ -10,9 +10,12 @@ class IsOwnerOrReadOnly(BasePermission):
         
         SAFE_METHODS = ('GET')
 
-        return bool(
-            request.method in SAFE_METHODS or
-            (obj.author == request.user)
-        )
+        if request.user.is_verified:
+            return bool(
+                request.method in SAFE_METHODS or
+                (obj.author == request.user)
+            )
+        else: return False
+        
 
         

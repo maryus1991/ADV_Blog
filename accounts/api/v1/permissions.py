@@ -11,3 +11,16 @@ class NotAuthenticatedPermissions(permissions.BasePermission):
             return True
         else: 
             return False
+
+
+class IsOwner(permissions.BasePermission):
+    # create this permission for detect user is owner or not 
+
+    def has_object_permission(self, request, view, object):
+        # user the request and object to check is the user is owner or not to see this info
+
+        # return True if the user is admin
+        if request.user.is_superuser:
+            return True
+
+        return object.id == request.user.id

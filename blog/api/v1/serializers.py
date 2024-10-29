@@ -91,7 +91,10 @@ class PostModelSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # for create a post should be staff user 
         # get request and check user is staff or raise error
-        if self.context.get('request').user.is_staff:
+
+        request = self.context.get('request')
+
+        if request.user.is_staff and request.user.is_active and request.user.is_verified :
 
             validated_data['author'] = self.context.get('request').user
             return super().create(validated_data)
@@ -102,7 +105,10 @@ class PostModelSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # for update a post should be staff user 
         # get request and check user is staff or raise error
-        if self.context.get('request').user.is_staff:
+
+        request = self.context.get('request')
+
+        if request.user.is_staff and request.user.is_active and request.user.is_verified:
 
             # check if the user id staff and owner of th post to change it 
             if instance.author.email == self.context.get('request').user.email :

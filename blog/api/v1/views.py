@@ -39,6 +39,10 @@ class PostModelViewSet(ModelViewSet):
         delete object if the user ad admin or staff user and his email is the same with author email
         """
 
+        # checking if the user is active and verify his account
+        if not request.user.is_verified or not request.user.is_active:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         instance = self.get_object()
         if request.user.is_superuser or ( request.user.is_staff and instance.author.email == request.user.email ):
 
@@ -162,7 +166,7 @@ class PostCommentModelViewSet(ModelViewSet):
                     user = request.user
 
                     # check the user
-                    if user is not None and request.user.is_authenticated:
+                    if user is not None and request.user.is_authenticated and user.is_verified:
                         
                         # check if user email is the same with comment email
                         if user.email == comment.email:
@@ -223,7 +227,7 @@ class PostCommentModelViewSet(ModelViewSet):
         """
         checking the user that just the comment owner or admin user can delete the comment 
         """
-        if user.is_superuser or (comment.email == user.email):
+        if user.is_superuser or (comment.email == user.email) or user.is_verified:
             
             # deactivate the objects
             comment.is_active = False

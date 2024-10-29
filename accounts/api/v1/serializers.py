@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
 
@@ -21,6 +22,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'first_name', 'last_name', 'avatar', 'password', 'conform_password']
+        extra_kwargs = {
+            'password':{
+                'write_only': True
+            }
+        }
 
     def validate(self, attrs):
         # set validate password for checking the password and conform password
@@ -32,11 +38,11 @@ class UserSerializer(serializers.ModelSerializer):
             )
 
         # checking the validate password 
-        # try:
-        #     validate_password(attrs.get("password"))
+        try:
+            validate_password(attrs.get("password"))
 
-        # except ValidationError as error:
-        #     raise serializers.ValidationError({"password": list(error.messages)})
+        except ValidationError as error:
+            raise serializers.ValidationError({"password": list(error.messages)})
 
         return super().validate(attrs)
 
@@ -68,7 +74,7 @@ class CustomAuthTokenSerializer(serializers.Serializer):
     password = serializers.CharField(
         label="Password",
         style={"input_type": "password"},
-        trim_whitespace=False,
+        trim_whitespace=True,
         write_only=True,
     )
 
@@ -84,7 +90,7 @@ class CustomAuthTokenSerializer(serializers.Serializer):
         user = User.objects.filter(email=email).first()
 
         # check if the user is active and verified
-        if not user.is_active and not user.is_verified:
+        if not user.is_active :
             raise serializers.ValidationError(
                 {"details": "please verified or activate your account"}
             )
@@ -130,12 +136,13 @@ class CustomJWTTokenObtainPairViewSerializer(TokenObtainPairSerializer):
 
         # for send the email and showing it with tokens
         validated_data['email'] = self.user.email
+        validated_data['uid'] = self.user.id
 
         # get the user 
         user = self.user
 
         # check if the user is active and verify his account
-        if user.is_active and user.is_verified:
+        if user.is_active :
             return validated_data
         
         # raise error if the user not active and now verify his account
@@ -143,4 +150,49 @@ class CustomJWTTokenObtainPairViewSerializer(TokenObtainPairSerializer):
             {"details": "please verified or activate your account"}
         )
 
+# ================== edit user account ==================
 
+class ChangePasswordSerializer(serializers.Serializer):
+
+    # create Change pass serializer  
+
+    password = serializers.CharField(write_only=True, max_length=255, required=True)    
+    new_password = serializers.CharField(write_only=True, max_length=255, required=True)
+    conform_new_password = serializers.CharField(write_only=True, max_length=255, required=True)
+
+    def validate(self, attrs):
+        # set validate password for checking the password and conform password
+
+        # checking the the passwords is same
+        if attrs.get("new_password") != attrs.get("conform_new_password"):
+            raise serializers.ValidationError(
+                {"details": "your passwords does not match"}
+            )
+
+        # checking the validate password 
+        try:
+            validate_password(attrs.get("new_password"))
+
+        except ValidationError as error:
+            raise serializers.ValidationError({"new_password": list(error.messages)})
+
+        return super().validate(attrs)
+
+
+class ChangeEmailSerializer(serializers.Serializer):
+
+    '''
+    create user  email serializer  
+    '''
+
+    email = serializers.EmailField(required=True)
+
+
+class ChangeUserInformation(serializers.Serializer):
+    """
+    create serializer for for last and first name and avatar changing 
+    """
+
+    first_name = serializers.CharField(trim_whitespace=True, max_length= 255)
+    last_name = serializers.CharField(trim_whitespace=True, max_length= 255)
+    avatar = serializers.ImageField(allow_empty_file=True)
