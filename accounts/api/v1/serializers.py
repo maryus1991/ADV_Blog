@@ -2,6 +2,9 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 import datetime
 
 from accounts.models import User
@@ -112,3 +115,32 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+# ===================== JWT =============================
+
+class CustomJWTTokenObtainPairViewSerializer(TokenObtainPairSerializer):
+    """
+    create custom TokenObtainPairSerializer for simple jwt for 
+    check the user verify and activations account
+    """
+
+    def validate(self, attrs):
+        # validate the user info
+        validated_data = super().validate(attrs)
+
+        # for send the email and showing it with tokens
+        validated_data['email'] = self.user.email
+
+        # get the user 
+        user = self.user
+
+        # check if the user is active and verify his account
+        if user.is_active and user.is_verified:
+            return validated_data
+        
+        # raise error if the user not active and now verify his account
+        raise serializers.ValidationError(
+            {"details": "please verified or activate your account"}
+        )
+
+

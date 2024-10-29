@@ -7,9 +7,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from accounts.models import User
-from .serializers import UserSerializer, CustomAuthTokenSerializer
+from .serializers import UserSerializer, CustomAuthTokenSerializer, CustomJWTTokenObtainPairViewSerializer
 from .permissions import NotAuthenticatedPermissions
 
 # ===================== Registration ==========================
@@ -86,3 +87,10 @@ class CustomLogoutToken(APIView):
         # for delete the token object and return not content Response
         request.user.auth_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# ====================== JWT ==================================
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    # set the custom serializer for  TokenObtainPairView
+
+    serializer_class = CustomJWTTokenObtainPairViewSerializer
