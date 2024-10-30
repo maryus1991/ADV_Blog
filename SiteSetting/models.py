@@ -17,8 +17,8 @@ class SiteSetting(models.Model):
     short_about = models.CharField(max_length=500)
     copy_right_text = models.CharField(max_length=255) 
     website_title = models.CharField(max_length=255)
-    image1 =   models.ImageField(upload_to='SiteSetting/')
-    image2 =   models.ImageField(upload_to='SiteSetting/')
+    image1 = models.ImageField(upload_to='SiteSetting/')
+    image2 = models.ImageField(upload_to='SiteSetting/')
     descriptions = RichTextUploadingField()
     additional_descriptions = RichTextUploadingField()
     location_link = models.URLField()
@@ -37,6 +37,7 @@ class Contact(models.Model):
     phone_number = models.CharField(max_length=255)
     subject = models.CharField(max_length=255)
     message = RichTextUploadingField()
+    is_read_by_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return self.full_name
