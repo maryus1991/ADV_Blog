@@ -23,4 +23,8 @@ class IsOwner(permissions.BasePermission):
         if request.user.is_superuser:
             return True
 
+        # check if user is log in or not
+        if not request.user.is_authenticated:
+            return False
+
         return object.id == request.user.id

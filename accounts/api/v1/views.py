@@ -10,6 +10,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.utils.crypto import get_random_string
 
 import datetime
 
@@ -238,6 +239,135 @@ class UserChangeProfile(UpdateAPIView):
     permission_classes = [IsOwner]
 
     def update(self, request, *args, **kwargs):
-        pass
+        # update the user information
+        # get the serializer and validate it
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # get the user id and email 
+        # get the email from request
+        # and check the user is log in or not
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        email = request.user.email 
+        uid = kwargs.get('pk')
+
+        # get the user  
+        user = User.objects.filter(id=uid, email=email)
+
+        # check if user is exist 
+        if user.exists():
+            
+            # get the exist if user is exist 
+            user = user.first()
+            
+            # check if user is active
+            if user.is_active and user.is_verified and uid == user.id:
+                
+                # update the user 
+                
+                user.first_name = serializer.validated_data.get('first_name')
+                user.last_name = serializer.validated_data.get('last_name')
+                user.avatar = serializer.validated_data.get('avatar')
+                user.updated_at = datetime.datetime.now()
+                user.save()
+
+                return Response(self.serializer_class(user).data, status=status.HTTP_202_ACCEPTED)
+
+            else:
+                # set error
+                return Response(' please verify and active your account', status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        else:
+            # set error
+            return Response(' user not found', status=status.HTTP_404_NOT_FOUND)
 
 
+class AuthenticatedUserInformation(APIView):
+    """
+    for get and showing the log in user information 
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # showing the information with get method 
+        # get the user id and return it
+
+        user_id = request.user.id
+        return Response({'user_id': user_id}, status=status.HTTP_202_ACCEPTED)
+
+# ==================== forgot password ========================
+
+class ForgotPassword(GenericAPIView):
+    # create forgot password just for send email
+
+    serializer_class = ChangeEmailSerializer
+
+    def post(self, request, *args, **kwargs):
+        # check if the user is log int or not 
+        if request.user.is_authenticated:
+            return Response('your cant user this service while your log in ', status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        # get the serializer and validate it
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # get the email and check it
+        email = serializer.validated_data.get('email')
+        user_object = User.objects.filter(email=email)
+
+        # check if the email exist
+        if user_object.exists():
+            
+            # get the exist user
+            user  = user_object.first()
+
+            # change the verified_code and resent it to user
+            user.verified_code = get_random_string(255)
+            user.save()
+
+            # todo send email
+
+            return Response(f'an email has been successfully to ({email}) please enter and change your password')
+        else:
+            # set not found error
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+# =================== account activation ======================
+
+class ActivationAccount(GenericAPIView):
+    # create forgot password just for send email
+
+    serializer_class = ChangeEmailSerializer
+
+    def post(self, request, *args, **kwargs):
+        # check if the user is log int or not 
+        if request.user.is_authenticated:
+            return Response('your cant user this service while your log in ', status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        # get the serializer and validate it
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # get the email and check it
+        email = serializer.validated_data.get('email')
+        user_object = User.objects.filter(email=email)
+
+        # check if the email exist
+        if user_object.exists():
+
+            # get the exist user
+            user  = user_object.first()
+
+            # change the verified_code and resent it to user
+            user.verified_code = get_random_string(255)
+            user.save()
+
+            # todo send email
+
+            return Response(f'an email has been successfully to ({email}) please enter and verify your acount')
+        else:
+            # set not found error
+            return Response(status=status.HTTP_404_NOT_FOUND)
