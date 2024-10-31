@@ -10,9 +10,12 @@ from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.shortcuts import get_object_or_404, render
 
+from mail_templated import EmailMessage, send_mail
+
 from datetime import datetime
 
 from blog.models import PostsComment
+from utils.SendEmailThread import SendEmailThread
 
 from .models import User
 from .forms import (
@@ -107,16 +110,35 @@ class Registrations(View):
                 if not user :
 
                     # create user if new email
-                    User.objects.create_user(
+                    user = User.objects.create_user(
                         email=email,
                         password=password
                 )   
+
+                    # set the random string for user to sent it with email
+                    user.verified_code = get_random_string(255)
+                    user.save()
 
                     # sending message 
                     messages.add_message(request, messages.SUCCESS,
                     '  حساب کاربری شما با موفقیت ساخنه شد و یک ایمیل جهت فعال سازی حساب کاربری خود ارسال شد'                        
                     )
-                    # todo : send email to conform
+                    
+                    # set the context for send it to email template
+                    context = {
+                        'url': str(request.get_host()) + reverse('ConformAccount', kwargs={
+                            'token': user.verified_code
+                        })
+                    }
+
+                    # create email object
+                    email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                                context, settings.EMAIL_HOST_USER, [email]) 
+
+                    # send email with threading 
+                    SendEmailThread(email_message).start()
+
+
                     return redirect(reverse('Authorizations'))
     
                 else:
@@ -706,10 +728,30 @@ class ResentEmail(View):
                 )
                 return  redirect(reverse('ResentEmail'))
             
+            # set new code for
+            user.verified_code = get_random_string(255)
+            user.save()
+
             # get the verfied code 
             verify_code = user.verified_code
 
-            # todo sent email
+
+            # set the context for send it to email template
+            context = {
+                'url': str(request.get_host()) + reverse('ConformAccount', kwargs={
+                    'token': user.verified_code
+                })
+            }
+            
+            send_mail('Email/ActivationAccount.tpl', 
+                        context, settings.EMAIL_HOST_USER, [user.email])
+
+            # create email object
+            email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                        context, settings.EMAIL_HOST_USER, [user.email]) 
+
+            # send email with threading 
+            SendEmailThread(email_message).start()
 
             # set message and redirect th user
             messages.success(

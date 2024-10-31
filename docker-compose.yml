@@ -10,10 +10,9 @@ services:
     ports:
       - 5432:5432
       
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=postgres
+    env_file:
+      - .env
+
 
   blog:
     container_name : blog
@@ -23,13 +22,16 @@ services:
       - ./:/app
     ports:
       - "8000:8000"
-    environment:
-      - SECRET_KEY=django-insecure-q=@t6qz@yr=uerjo!=67cdmz$w9i9hmq6mj-ustc*p9v&53^wc
-      - DEBUG=True
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=postgres
-      - POSTGRES_HOST=postgres
+      - "587:587"
+      - "465:465"
+
+    env_file:
+      - .env
+
+    expose:
+      - 587
+      - 25
+      - 465
     
     depends_on:
       - postgres

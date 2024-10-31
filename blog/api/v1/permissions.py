@@ -10,6 +10,12 @@ class IsOwnerOrReadOnly(BasePermission):
         
         SAFE_METHODS = ('GET')
 
+        if not request.user.is_authenticated:
+            
+            return request.method in SAFE_METHODS
+
+
+
         if request.user.is_verified:
             return bool(
                 request.method in SAFE_METHODS or
