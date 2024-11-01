@@ -5,6 +5,6 @@ Hello Freand Please Activate your account
 {% endblock %}
 
 {% block body %}
-{{ url }}
-{{ url }}
+<a href="https://{{ url }}" > </a>
+<a href="http://{{ url }}" > </a>
 {% endblock %}

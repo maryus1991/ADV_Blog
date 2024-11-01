@@ -3,8 +3,10 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
-
+from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from django.urls import reverse
 
 import datetime
 

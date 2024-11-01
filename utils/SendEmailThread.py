@@ -7,6 +7,5 @@ class SendEmailThread(threading.Thread):
         self.email = email
 
     def run(self):
-        print('okkkkkk')
         self.email.send()
-        print('okkkkkk')
+

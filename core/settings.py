@@ -194,18 +194,11 @@ LOGIN_URL = '/account/authorize/'
 
 # set email configuration
 
-# EMAIL_HOST = config('EMAIL_HOST', default='mail.mebrahimy.ir') 
-# EMAIL_PORT = config('EMAIL_POST', default=587)
-# EMAIL_HOST_USER = config('EMAIL_USERNAME', default='aes@mebrahimy.ir')
-# EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD')
-# EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST', default='mail.mebrahimy.ir') 
+EMAIL_PORT = config('EMAIL_POST', default=587)
+EMAIL_HOST_USER = config('EMAIL_USERNAME', default='aes@mebrahimy.ir')
+EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD')
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST = 'mail.mebrahimy.ir'
-EMAIL_HOST_USER = 'blog@aes.mebrahimy.ir'
-EMAIL_HOST_PASSWORD = 'j2{A[g)86Z]}'
-EMAIL_PORT = 587       
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+

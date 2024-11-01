@@ -5,6 +5,6 @@ Hello Freand Please enter this lin to rest your password account
 {% endblock %}
 
 {% block body %}
-{{ first_url }}
-{{ second_url }}
+<a href="https://{{ url }}" > </a>
+<a href="http://{{ url }}" > </a>
 {% endblock %}

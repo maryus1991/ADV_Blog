@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from mail_templated import EmailMessage
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, GenericAPIView
 
 from rest_framework.authtoken.models import Token
@@ -11,9 +12,11 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.utils.crypto import get_random_string
-
+from django.urls import reverse
 import datetime
 
+from django.conf import settings
+from utils.SendEmailThread import SendEmailThread
 from accounts.models import User
 
 from .serializers import (UserSerializer, 
@@ -46,9 +49,31 @@ class Registrations(GenericAPIView):
         # check with if statement
         if not user_exist :
             
-            # saving the user and send email
-            # todo send email
+            # create the user
             serializer.save()
+
+            
+            # get the user again and set the verify code
+            user = User.objects.filter(email=email).first()
+
+            user.verified_code = get_random_string(255)
+            user.save
+
+            # set the context for send it to email template
+            context = {
+                'url': str(request.get_host()) + reverse('ConformAccount', kwargs={
+                    'token': user.verified_code
+                })
+            }
+            
+
+            # create email object
+            email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                        context, settings.EMAIL_HOST_USER, [user.email]) 
+
+            # send email with threading 
+            SendEmailThread(email_message).start()
+
 
             return Response(f'''your account has been created successfully 
                                 and send conform code for this email ({email}) 
@@ -127,6 +152,7 @@ class UserChangePassWord(UpdateAPIView):
     """
     permission_classes = [IsAuthenticated]
     serializer_class = ChangePasswordSerializer
+    http_method_names = ['put']
 
     def get_queryset(self):
         # get and overwrite the query set for selecting only one user 
@@ -186,6 +212,7 @@ class UserChangeEmail(UpdateAPIView):
 
     serializer_class = ChangeEmailSerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ['put']
 
     def get_queryset(self):
         # get and overwrite the query set for selecting only one user 
@@ -210,8 +237,8 @@ class UserChangeEmail(UpdateAPIView):
 
         # check user is exist 
         if user.exists():
-            # todo send email
-
+            
+            # get the if exist
             user = user.first()
 
             # check if the comming email and current email are same
@@ -224,7 +251,23 @@ class UserChangeEmail(UpdateAPIView):
             user.email = email
             user.is_verified = False
             user.updated_at = datetime.datetime.now()
+            user.verified_code = get_random_string(255)
             user.save()
+
+            # set the context for send it to email template
+            context = {
+                'url': str(request.get_host()) + reverse('ConformAccount', kwargs={
+                    'token': user.verified_code
+                })
+            }
+            
+
+            # create email object
+            email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                        context, settings.EMAIL_HOST_USER, [user.email]) 
+
+            # send email with threading 
+            SendEmailThread(email_message).start()
 
             return Response('your email has been changed successfully please conform it', 
                     status=status.HTTP_200_OK)
@@ -234,9 +277,12 @@ class UserChangeEmail(UpdateAPIView):
 
 
 class UserChangeProfile(UpdateAPIView):
+
     # set user change profile or account info
+    
     serializer_class = ChangeUserInformation
     permission_classes = [IsOwner]
+    http_method_names = ['put']
 
     def update(self, request, *args, **kwargs):
         # update the user information
@@ -328,7 +374,20 @@ class ForgotPassword(GenericAPIView):
             user.verified_code = get_random_string(255)
             user.save()
 
-            # todo send email
+            # set the context for send it to email template
+            context = {
+                'url': str(request.get_host()) + reverse('ForgotPassword_token', kwargs={
+                    'token': user.verified_code
+                })
+            }
+            
+
+            # create email object
+            email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                        context, settings.EMAIL_HOST_USER, [user.email]) 
+
+            # send email with threading 
+            SendEmailThread(email_message).start()
 
             return Response(f'an email has been successfully to ({email}) please enter and change your password')
         else:
@@ -365,9 +424,23 @@ class ActivationAccount(GenericAPIView):
             user.verified_code = get_random_string(255)
             user.save()
 
-            # todo send email
+            # set the context for send it to email template
+            context = {
+                'url': str(request.get_host()) + reverse('ConformAccount', kwargs={
+                    'token': user.verified_code
+                })
+            }
+            
+
+            # create email object
+            email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                        context, settings.EMAIL_HOST_USER, [user.email]) 
+
+            # send email with threading 
+            SendEmailThread(email_message).start()
 
             return Response(f'an email has been successfully to ({email}) please enter and verify your acount')
         else:
             # set not found error
             return Response(status=status.HTTP_404_NOT_FOUND)
+
