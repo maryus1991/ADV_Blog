@@ -277,12 +277,11 @@ class UserChangeEmail(UpdateAPIView):
 
 
 class UserChangeProfile(UpdateAPIView):
-
-    # set user change profile or account info
     
+    # set user change profile or account info
     serializer_class = ChangeUserInformation
     permission_classes = [IsOwner]
-    http_method_names = ['put']
+
 
     def update(self, request, *args, **kwargs):
         # update the user information
