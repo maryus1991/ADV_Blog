@@ -1,0 +1,146 @@
+
+{% extends "layouts/Base.html" %}
+
+{% block title %}
+    Posts List 
+{% endblock title %}
+
+
+{% block breadcrumbs_title %}
+    پست ها 
+{% endblock breadcrumbs_title %}  
+
+{% block breadcrumbs_contents %}
+<li>
+    <a class="home-page-link" href="{% url 'PostsListsViews' %}"> 
+        پست ها
+        <i class="fal fa-angle-right"></i>
+     </a>
+</li>
+
+<li>
+        
+    <a class='current-page' href="{% url 'CretePost'  %}">
+
+        نوشتن مقاله
+
+    </a>
+</li>
+
+
+
+{% endblock breadcrumbs_contents %}
+
+{% block content %}
+
+    <!--================= Preloader Section Start Here =================-->
+
+    <div id="weiboo-load">
+        <div class="preloader-new">
+            <svg class="cart_preloader" role="img" aria-label="Shopping cart_preloader line animation"
+                viewBox="0 0 128 128" width="128px" height="128px" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="8">
+                    <g class="cart__track" stroke="hsla(0,10%,10%,0.1)">
+                        <polyline points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80" />
+                        <circle cx="43" cy="111" r="13" />
+                        <circle cx="102" cy="111" r="13" />
+                    </g>
+                    <g class="cart__lines" stroke="currentColor">
+                        <polyline class="cart__top" points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80"
+                            stroke-dasharray="338 338" stroke-dashoffset="-338" />
+                        <g class="cart__wheel1" transform="rotate(-90,43,111)">
+                            <circle class="cart__wheel-stroke" cx="43" cy="111" r="13" stroke-dasharray="81.68 81.68"
+                                stroke-dashoffset="81.68" />
+                        </g>
+                        <g class="cart__wheel2" transform="rotate(90,102,111)">
+                            <circle class="cart__wheel-stroke" cx="102" cy="111" r="13" stroke-dasharray="81.68 81.68"
+                                stroke-dashoffset="81.68" />
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </div>
+    </div>
+    <!--================= Preloader End Here =================-->
+
+    <div class="anywere"></div>
+
+    <!--================= Header Section Start Here =================-->
+
+
+    <div class="news-left2">
+        <div class="button-area">
+        
+        <div id="comment-form" class="comment-form mb-10">
+            <form id='comment_form' method='post' >
+                {% csrf_token %}
+                {{ form.author }}
+                
+                <div class="contact-form">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="input-box text-input mb-20">
+                                {{ form.media }}
+                                {{ form.text }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="input-box text-input mb-20">
+                                {{ form.media }}
+                                {{ form.text2 }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+        
+                            <div class="input-box mb-20">
+                                {{ form.title }}
+                            </div>
+                            
+                        </div>
+                                
+
+                        <div class="col-lg-6 col-sm-12">
+        
+                                <div class="input-box mb-20">
+                                    {{ form.image }} 
+                                </div>
+                                <div class="input-box mb-20">
+                                    {{ form.image2 }}
+                                </div>
+                            
+                            </div>
+        
+        
+                            <div class="col-12 mb-15">
+                                <button class="form-btn form-btn4">
+                                    <i class="fal fa-comment">
+                                    </i>
+                                    Create The Post
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+            </form>
+        </div>
+        
+        </div>
+        </div>
+        
+
+
+
+
+
+
+    <!--================= Scroll to Top Start =================-->
+    <div class="scroll-top-btn scroll-top-btn1"><i class="fas fa-angle-up arrow-up"></i><i
+        class="fas fa-circle-notch"></i></div>
+<!--================= Scroll to Top End =================-->
+
+<!-- ======================paging======================== -->
+
+
+<!-- ==================================================== -->
+{% endblock content %}

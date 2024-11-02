@@ -1,9 +1,14 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib import messages
-from django.views.generic import DetailView, ListView, View, RedirectView
+from django.views.generic import (DetailView, 
+                                    ListView,  
+                                        View,   
+                                RedirectView, 
+                                  CreateView, 
+                                  UpdateView)
+
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Post, PostViews, PostsComment
 from django.db.models.aggregates import Count
 from django.db.models import Q
 from django.urls import reverse
@@ -13,9 +18,9 @@ from django.http import Http404
 import datetime
 from utils.get_ip import get_ip
 
-from .models import PostsComment
+from .models import Post, PostViews, PostsComment
 from SiteSetting.models import SiteSetting
-from .forms import CommentModelForm
+from .forms import CommentModelForm, PostModelForm
 
 SiteSetting = SiteSetting.objects.filter(is_active=True).order_by('-id').first
 
@@ -282,6 +287,57 @@ class EditPostComment(LoginRequiredMixin, View):
             )
 
         return redirect(reverse('PostsDetailViews', kwargs={'pk': post_id})) 
+
+
+class CretePost(LoginRequiredMixin, CreateView):
+    # create view fo creating post 
+    model = Post
+    template_name = 'blog/CreateBlog.html'
+    form_class = PostModelForm
+
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        *set the dispatch func for check the user is active and verified his account
+        """
+        if request.user.is_authenticated and    \
+                            request.user.is_active and \
+                                request.user.is_verified:
+
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            # set and redirect the user to dashboard if not active and not verify
+            messages.error(
+                request,
+                'لطفا اکانت خود را فعال کنید'
+            )
+
+            return redirect(reverse('Dashboard'))
+
+    def form_valid(self, form):
+        # set the author id
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+
+        # return the form errors
+        messages.error(self.request, form.errors)
+        response = super().form_invalid(form)
+        return response
+    
+    def get_success_url(self):
+        # return the user to post page
+
+        return reverse('PostsDetailViews', kwargs={'pk':self.object.id})
+    
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        form_class.author = self.request.user
+        return super().get_form(form_class)
+
 
 # render partial for header and footer
 

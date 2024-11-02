@@ -166,7 +166,9 @@ class PostCommentModelViewSet(ModelViewSet):
                     user = request.user
 
                     # check the user
-                    if user is not None and request.user.is_authenticated and user.is_verified:
+                    if (user is not None and 
+                            request.user.is_authenticated and 
+                            user.is_verified and user.is_active):
                         
                         # check if user email is the same with comment email
                         if user.email == comment.email:
@@ -227,7 +229,10 @@ class PostCommentModelViewSet(ModelViewSet):
         """
         checking the user that just the comment owner or admin user can delete the comment 
         """
-        if user.is_superuser or (comment.email == user.email) or user.is_verified:
+        if user.is_superuser or \
+                    ((comment.email == user.email) and \
+                        user.is_verified and user.is_active ):
+            
             
             # deactivate the objects
             comment.is_active = False

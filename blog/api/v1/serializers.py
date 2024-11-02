@@ -94,13 +94,13 @@ class PostModelSerializer(serializers.ModelSerializer):
 
         request = self.context.get('request')
 
-        if request.user.is_staff and request.user.is_active and request.user.is_verified :
+        if request.user.is_active and request.user.is_verified :
 
             validated_data['author'] = self.context.get('request').user
             return super().create(validated_data)
 
         else:
-            raise AuthenticationFailed('Not Allowed to create posts')
+            raise AuthenticationFailed('Not Allowed to create posts please verify and active your account')
         
     def update(self, instance, validated_data):
         # for update a post should be staff user 
@@ -108,7 +108,7 @@ class PostModelSerializer(serializers.ModelSerializer):
 
         request = self.context.get('request')
 
-        if request.user.is_staff and request.user.is_active and request.user.is_verified:
+        if  request.user.is_active and request.user.is_verified:
 
             # check if the user id staff and owner of th post to change it 
             if instance.author.email == self.context.get('request').user.email :
