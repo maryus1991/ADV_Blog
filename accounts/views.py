@@ -10,9 +10,12 @@ from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.shortcuts import get_object_or_404, render
 
+from mail_templated import EmailMessage, send_mail
+
 from datetime import datetime
 
 from blog.models import PostsComment
+from utils.SendEmailThread import SendEmailThread
 
 from .models import User
 from .forms import (
@@ -107,16 +110,35 @@ class Registrations(View):
                 if not user :
 
                     # create user if new email
-                    User.objects.create_user(
+                    user = User.objects.create_user(
                         email=email,
                         password=password
                 )   
+
+                    # set the random string for user to sent it with email
+                    user.verified_code = get_random_string(255)
+                    user.save()
 
                     # sending message 
                     messages.add_message(request, messages.SUCCESS,
                     '  حساب کاربری شما با موفقیت ساخنه شد و یک ایمیل جهت فعال سازی حساب کاربری خود ارسال شد'                        
                     )
-                    # todo : send email to conform
+                    
+                    # set the context for send it to email template
+                    context = {
+                        'url': str(request.get_host()) + reverse('ConformAccount', kwargs={
+                            'token': user.verified_code
+                        })
+                    }
+
+                    # create email object
+                    email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                                context, settings.EMAIL_HOST_USER, [email]) 
+
+                    # send email with threading 
+                    SendEmailThread(email_message).start()
+
+
                     return redirect(reverse('Authorizations'))
     
                 else:
@@ -374,8 +396,27 @@ class ForgotPassword(View):
 
             # checking if user exist
             if user is not None:
-                # todo send mail
                 
+                # change the verified_code
+                user.verified_code = get_random_string(255)
+                user.save()
+
+                # set the context for send it to email template
+                context = {
+                    'url': str(request.get_host()) + reverse('ForgotPassword_token', kwargs={
+                        'token': user.verified_code
+                    })
+                }
+                
+
+                # create email object
+                email_message = EmailMessage('Email/ForgotPassword.tpl', 
+                            context, settings.EMAIL_HOST_USER, [user.email]) 
+
+                # send email with threading 
+                SendEmailThread(email_message).start()
+
+                # set message and redirect th user
                 
                 messages.success(
                     request,
@@ -415,8 +456,14 @@ class ForgotPassword_Token(View):
                 'لطفا اول از حساب کاربری خود خارج شوید'
             )
 
-            # edit the user verify code 
-            user = get_object_or_404(User, id = request.user.id)
+            # get the token 
+            token = kwargs.get('token')
+
+
+            # get the if user not exist gonna redirect to dashboard  
+            user = User.objects.filter(id= request.user.id, verified_code= token).exists()
+            if not user:
+                return redirect(reverse('Dashboard'))
             
             # redirect the user to dashboard 
             return redirect(reverse('Dashboard'))
@@ -426,6 +473,7 @@ class ForgotPassword_Token(View):
 
     def get(self, request, *args, **kwargs):
         # get method for showing change pass form
+        
         return render(request, 'accounts/ForgotPassword.html', {'ChangePasswordForm': ChangePasswordForm})
 
     def post(self, request, *args, **kwargs):
@@ -446,9 +494,14 @@ class ForgotPassword_Token(View):
             
             # checking if user is exist
             if user is not None:
+
+                # update the user
                 user.set_password(password)
                 user.verified_code = get_random_string(255)
+                user.updated_at = datetime.now()
                 user.save()
+
+                # set the successfully message
                 messages.success(
                     request,
                     'رمز عبور شما با موفقیت تغییر یافت'
@@ -570,8 +623,8 @@ class ChangeEmail(LoginRequiredMixin, RedirectView):
                 return reverse('Dashboard')
             
             # checking the email is unique  
-            exist_user = User.objects.filter(email=email).exists
-            if not exist_user :
+            exist_user = User.objects.filter(email=email).exists()
+            if exist_user :
 
                 # setting message and redirect user to forgot pass page
                 messages.error(
@@ -605,7 +658,26 @@ class ChangeEmail(LoginRequiredMixin, RedirectView):
                 'ایمیل شما با موفقیت تغییر یافت و  یک ایمیل برای شما ارسال شد لطفا اول ایمیل را تایید و سپس دوباره وارد سایت شوید'
             )
             
-            # todo send email
+            # set the context for send it to email template
+            context = {
+                'url': str(request.get_host()) + reverse('ConformAccount', kwargs={
+                    'token': user.verified_code
+                })
+            }
+            
+
+            # create email instance
+            email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                        context, settings.EMAIL_HOST_USER, [user.email]) 
+
+            # send email  with threading 
+            SendEmailThread(email_message).start()
+
+            # set message and redirect th user
+            messages.success(
+                    request, 
+                    f'لینک فعال سازی برای این ایمیل ( {user.email} ) ارسال شد'
+                )
 
             # logout the user and sent it to login again
             logout(request)
@@ -706,10 +778,28 @@ class ResentEmail(View):
                 )
                 return  redirect(reverse('ResentEmail'))
             
+            # set new code for
+            user.verified_code = get_random_string(255)
+            user.save()
+
             # get the verfied code 
             verify_code = user.verified_code
 
-            # todo sent email
+
+            # set the context for send it to email template
+            context = {
+                'url': str(request.get_host()) + reverse('ConformAccount', kwargs={
+                    'token': user.verified_code
+                })
+            }
+            
+
+            # create email object
+            email_message = EmailMessage('Email/ActivationAccount.tpl', 
+                        context, settings.EMAIL_HOST_USER, [user.email]) 
+
+            # send email with threading 
+            SendEmailThread(email_message).start()
 
             # set message and redirect th user
             messages.success(

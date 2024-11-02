@@ -21,6 +21,7 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
 
     # user registrations
+    path('registration', Registrations.as_view()),
     path('authenticated-user-information', AuthenticatedUserInformation.as_view()),
 
     # user showing and edit account

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'mail_templated',
 
     # created app
     'blog',
@@ -73,8 +74,8 @@ REST_FRAMEWORK = {
 
 # simple jwt configurations
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=300),
 }
 
 # ckeditor config
@@ -190,3 +191,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/account/authorize/'
+
+# set email configuration
+
+EMAIL_HOST = config('EMAIL_HOST', default='mail.mebrahimy.ir') 
+EMAIL_PORT = config('EMAIL_POST', default=587)
+EMAIL_HOST_USER = config('EMAIL_USERNAME', default='aes@mebrahimy.ir')
+EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+

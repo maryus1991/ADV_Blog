@@ -24,3 +24,5 @@ class SiteSettingView(ListAPIView):
 
     queryset = SiteSetting.objects.filter(is_active=True).all()
     serializer_class = SiteSettingModelSerializer
+
+
