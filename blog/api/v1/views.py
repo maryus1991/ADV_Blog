@@ -5,8 +5,10 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework import status
 
-from blog.models import Post, PostsComment
 import datetime
+
+from blog.models import Post, PostsComment, PostViews
+from utils.get_ip import get_ip
 
 from .serializers import PostModelSerializer, PostsCommentModelSerializer
 from .permissions import IsOwnerOrReadOnly
@@ -56,6 +58,29 @@ class PostModelViewSet(ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise AuthenticationFailed("Your are not allowed to delete ")
+    
+    def retrieve(self, request, *args, **kwargs):
+        # call and overwrite the retrieve dev for count the views
+        
+        # getting ip
+        ip = get_ip(request)
+
+        # create views is its ip is not exist  or returned it if exist
+        view = PostViews.objects.get_or_create(
+            post_id=kwargs.get('pk'),
+            ip=ip,
+            user=request.user if request.user.is_authenticated else None,
+        )
+
+        # changing the count of the views
+        count = 0
+        if view[0].count is not None:
+            count = view[0].count
+
+        view[0].count = count + 1
+        view[0].save()
+
+        return super().retrieve(request, *args, **kwargs)
 
 
 class PostCommentModelViewSet(ModelViewSet):
