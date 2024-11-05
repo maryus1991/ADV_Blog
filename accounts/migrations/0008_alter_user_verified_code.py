@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0007_alter_user_verified_code'),
+        ("accounts", "0007_alter_user_verified_code"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='verified_code',
-            field=models.CharField(default='egPuzR9vzKH1shdHhwPihhVYB821Y4RIzaHZhOCIUfNmJljgE4k6nif0MsKARxbdD2sf9KLk7qaXKeGfJRc1T5pJf4BzreI4i80mM5lG94gaOT8ZKtGRo57jmtiQOflNzfDO8rPgyyNS5GxaW5e9yNI3FYpVt6N6HHh6ZzFxalK1a0cizNI3kXKmAWBeyEL05TKSkBUJbVviUIfYlZ4uuuIYe5wLpleAUvkfxSRBdGzjf3H2VMe5toHNUU6s6yU', max_length=255),
+            model_name="user",
+            name="verified_code",
+            field=models.CharField(
+                default="egPuzR9vzKH1shdHhwPihhVYB821Y4RIzaHZhOCIUfNmJljgE4k6nif0MsKARxbdD2sf9KLk7qaXKeGfJRc1T5pJf4BzreI4i80mM5lG94gaOT8ZKtGRo57jmtiQOflNzfDO8rPgyyNS5GxaW5e9yNI3FYpVt6N6HHh6ZzFxalK1a0cizNI3kXKmAWBeyEL05TKSkBUJbVviUIfYlZ4uuuIYe5wLpleAUvkfxSRBdGzjf3H2VMe5toHNUU6s6yU",
+                max_length=255,
+            ),
         ),
     ]

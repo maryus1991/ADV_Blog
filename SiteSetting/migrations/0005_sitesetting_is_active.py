@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('SiteSetting', '0004_alter_contact_message'),
+        ("SiteSetting", "0004_alter_contact_message"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sitesetting',
-            name='is_active',
+            model_name="sitesetting",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
     ]

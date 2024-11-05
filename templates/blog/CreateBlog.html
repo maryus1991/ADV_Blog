@@ -72,7 +72,7 @@
         <div class="button-area">
         
         <div id="comment-form" class="comment-form mb-10">
-            <form id='comment_form' method='post' >
+            <form id='comment_form' method='post' enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.author }}
                 

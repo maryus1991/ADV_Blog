@@ -1,0 +1,13 @@
+./accounts/api/v1/serializers.py:11:1: E303 too many blank lines (3)
+./accounts/api/v1/views.py:82:75: W291 trailing whitespace
+./accounts/api/v1/views.py:83:79: W291 trailing whitespace
+./accounts/api/v1/views.py:84:78: W291 trailing whitespace
+./accounts/api/v1/views.py:86:17: E128 continuation line under-indented for visual indent
+./accounts/api/v1/views.py:87:13: E124 closing bracket does not match visual indentation
+./accounts/views.py:4:24: E271 multiple spaces after keyword
+./blog/api/v1/views.py:103:27: E203 whitespace before ':'
+./blog/api/v1/views.py:250:91: W291 trailing whitespace
+./blog/api/v1/views.py:252:103: E202 whitespace before ')'
+./blog/forms.py:4:20: E271 multiple spaces after keyword
+./blog/management/commands/fake_blog.py:8:1: E303 too many blank lines (3)
+./blog/views.py:11:1: W293 blank line contains whitespace

@@ -68,9 +68,22 @@
                     <div class="news-left2">
                         <div class="news-top">
                             <div class="icon-text">
-                                <span class="viewers fs-10"><a href="#"><i class="fal fa-eye"></i> {{ post.views }} Views</a></span>
-                                <span class="comment fs-10"><a href="#"><i class="fal fa-comments"></i> {{ post.postscomment_set.count }} Comments</a></span>
+                                <span class="viewers fs-10"><a ><i class="fal fa-eye"></i> {{ post.views }} Views</a></span>
+                                <span class="comment fs-10"><a ><i class="fal fa-comments"></i> {{ post.postscomment_set.count }} Comments</a></span>
                                 <span class="date fs-10"><a><i class="fal fa-calendar-alt"></i> {{ post.updated_at.date }} </a></span>
+                                {% if request.user.email == post.author.email %}
+                                    <span class="date fs-10"><a class="btn " href="{% url 'UpdatePost' post.id %}"> <code> Edit The Post </code></a></span>
+                                    {% endif %}
+
+                                {% if request.user.email == post.author.email or request.user.is_superuser %}
+                                    |
+                                
+                                    <span class="date fs-10"> <form action="{% url 'DeletePost' post.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger"> Delete The Post </button>
+                                    </form>
+                                    </span>
+                                {% endif %}
                             </div>
                             <div class="feature-section">
                                 <h2 class="section-title">{{ post.title }}</h2>
@@ -87,8 +100,7 @@
                                         <div class="image-1">
                                             {% if post.image %} 
                                                 <img src="{{ post.image.url }}" width='454px' height='341px' alt="img">
-                                            {% else %}
-                                                <img src="/assets/images/background/furniture-banner.webp" alt="img">
+                                            
                                             {% endif %}
                                         </div>
                                     </div>
@@ -96,8 +108,7 @@
                                         <div class="image-2">
                                             {% if post.image2 %}
                                                 <img src="{{ post.image2.url }}" width='454px' height='341px' alt="img">
-                                            {% else %}
-                                                <img src="/assets/images/background/furniture-banner.webp" width='454px' height='341px' alt="img">
+
                                             {% endif %}
                                         </div>
                                     </div>

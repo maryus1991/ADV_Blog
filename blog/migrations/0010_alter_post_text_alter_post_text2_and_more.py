@@ -7,23 +7,25 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0009_alter_postscomment_parent'),
+        ("blog", "0009_alter_postscomment_parent"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='post',
-            name='text',
+            model_name="post",
+            name="text",
             field=ckeditor_uploader.fields.RichTextUploadingField(),
         ),
         migrations.AlterField(
-            model_name='post',
-            name='text2',
-            field=ckeditor_uploader.fields.RichTextUploadingField(blank=True, null=True),
+            model_name="post",
+            name="text2",
+            field=ckeditor_uploader.fields.RichTextUploadingField(
+                blank=True, null=True
+            ),
         ),
         migrations.AlterField(
-            model_name='postscomment',
-            name='comment',
+            model_name="postscomment",
+            name="comment",
             field=ckeditor_uploader.fields.RichTextUploadingField(),
         ),
     ]
