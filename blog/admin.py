@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Post ,PostsComment,  PostViews
+from .models import Post, PostsComment, PostViews
+
 # Register your models here.
 
 

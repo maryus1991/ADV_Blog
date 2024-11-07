@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0008_alter_postviews_count'),
+        ("blog", "0008_alter_postviews_count"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='postscomment',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='child', to='blog.postscomment'),
+            model_name="postscomment",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="child",
+                to="blog.postscomment",
+            ),
         ),
     ]

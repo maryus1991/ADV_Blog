@@ -9,44 +9,34 @@ class ContactModelForm(forms.ModelForm):
     """
 
     # add  ckeditor.widgets to message for contact
-    message = forms.CharField( widget=CKEditorWidget(config_name='comment',
-        attrs={
-            'placeholder':"Enter message",
-
-            'id': "validationDefault05",
-            'cols': "350",
-            'rows': "10" ,
-        }
-    ))
+    message = forms.CharField(
+        widget=CKEditorWidget(
+            config_name="comment",
+            attrs={
+                "placeholder": "Enter message",
+                "id": "validationDefault05",
+                "cols": "350",
+                "rows": "10",
+            },
+        )
+    )
 
     class Meta:
         # add and set the configurations
         model = Contact
-        fields = ('full_name', 'email', 'phone_number', 'subject', 'message')
+        fields = ("full_name", "email", "phone_number", "subject", "message")
 
         widgets = {
-            'full_name': forms.TextInput(
-                attrs={
-                    'placeholder': "Full Name", 
-                    'id': "validationDefault01"
-                }
+            "full_name": forms.TextInput(
+                attrs={"placeholder": "Full Name", "id": "validationDefault01"}
             ),
-            'email': forms.EmailInput(
-                attrs={
-                    'placeholder': "Email", 
-                    'id': "validationDefault02"
-                }
+            "email": forms.EmailInput(
+                attrs={"placeholder": "Email", "id": "validationDefault02"}
             ),
-            'phone_number': forms.TextInput(
-                attrs={
-                    'placeholder': "Phone Number", 
-                    'id': "validationDefault03"
-                }
+            "phone_number": forms.TextInput(
+                attrs={"placeholder": "Phone Number", "id": "validationDefault03"}
             ),
-            'subject': forms.TextInput(
-                attrs={
-                    'placeholder': "Phone Number", 
-                    'id': "validationDefault04"
-                }
+            "subject": forms.TextInput(
+                attrs={"placeholder": "Phone Number", "id": "validationDefault04"}
             ),
         }

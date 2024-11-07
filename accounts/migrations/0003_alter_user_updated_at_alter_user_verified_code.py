@@ -6,18 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_user_verified_code'),
+        ("accounts", "0002_user_verified_code"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='updated_at',
+            model_name="user",
+            name="updated_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='verified_code',
-            field=models.CharField(default='nQDR0x4t45ZvWWzQaOrBc2odnWHoUBHPpuwTMoY04ArdODobLsHJvNOlWTBmDn9NSxoDv0ov3oxJLkOqzhGifIeXKYMH671CkzBX2Sh9RUwsmvyeIASRWVO6oaky1X5LFNGlhZlrwkfhC3ZU9fTqDQVrqUhuZVOIUEaZ6gSrmUK55aMPkLn11UTGpHkhWTv3grGsosk183duxTxbdhPPjqOyv943JddgAW2SUDXSASbquIz2MjcAscsgtpfXsu1', max_length=255),
+            model_name="user",
+            name="verified_code",
+            field=models.CharField(
+                default="nQDR0x4t45ZvWWzQaOrBc2odnWHoUBHPpuwTMoY04ArdODobLsHJvNOlWTBmDn9NSxoDv0ov3oxJLkOqzhGifIeXKYMH671CkzBX2Sh9RUwsmvyeIASRWVO6oaky1X5LFNGlhZlrwkfhC3ZU9fTqDQVrqUhuZVOIUEaZ6gSrmUK55aMPkLn11UTGpHkhWTv3grGsosk183duxTxbdhPPjqOyv943JddgAW2SUDXSASbquIz2MjcAscsgtpfXsu1",
+                max_length=255,
+            ),
         ),
     ]

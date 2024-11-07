@@ -1,0 +1,16 @@
+[flake8]
+
+extend-ignore = 
+    E501 ,
+    E722
+
+exlude = 
+    .git,
+    .gitignore,
+    __pycache__,
+    venv,
+    .env,
+    setting.py, 
+    __init__/,
+ 
+

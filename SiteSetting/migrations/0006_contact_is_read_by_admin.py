@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('SiteSetting', '0005_sitesetting_is_active'),
+        ("SiteSetting", "0005_sitesetting_is_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='contact',
-            name='is_read_by_admin',
+            model_name="contact",
+            name="is_read_by_admin",
             field=models.BooleanField(default=False),
         ),
     ]
