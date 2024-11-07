@@ -87,7 +87,7 @@
                                         <li><a href="#">WINTER DRESS</a></li>
                                     </ul> {% endcomment %}
                                     <div class="title">
-                                        <a href="{% url 'PostsDetailViews' post.id %}">{{post.title|truncatechars:50}}</a>
+                                        <a href="{% url 'PostsDetailViews' post.id %}">{{ post.title|truncatechars:40 }}</a>
                                     </div>
                                     <div class="author-info d-flex align-items-center">
                                         
