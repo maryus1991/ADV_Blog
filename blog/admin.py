@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, PostsComment, PostViews
+from .models import Post, PostsComment, PostViews, Category
 
 # Register your models here.
 
@@ -7,3 +7,4 @@ from .models import Post, PostsComment, PostViews
 admin.site.register(Post)
 admin.site.register(PostViews)
 admin.site.register(PostsComment)
+admin.site.register(Category)

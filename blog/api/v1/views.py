@@ -29,11 +29,20 @@ class PostModelViewSet(ModelViewSet):
     ]
 
     # set fields for filter and search
-    search_fields = [
-        "title",
-        "text",
-        "text2",
-    ]
+    search_fields = {
+        "title": ['exec', 'in'],
+        "text": ['exec', 'in'],
+        "text2": ['exec', 'in'],
+        'category__title':['in', 'exec'],
+        'category__slug':['in', 'exec'],
+
+    }
+
+    filterset_fields = {
+        "category": ["exact", "in"],
+        "author": ["exact", "in"],
+    }
+
     ordering_fields = ["created_at", "updated_at"]
 
     # set the query and filter it for is activated posts

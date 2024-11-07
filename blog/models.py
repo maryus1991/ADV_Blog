@@ -5,6 +5,28 @@ from ckeditor_uploader.fields import RichTextUploadingField
 # get the user model
 User = get_user_model()
 
+class CategoryManager(models.Manager):
+    """
+    for showing just active objects
+    """
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=True).order_by("-id").all()
+
+class Category(models.Model):
+    """
+    create category model for posts
+    """
+
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(allow_unicode=True, db_index=True)
+    is_active = models.BooleanField()
+
+    objects = CategoryManager()
+
+    def __str__(self):
+        return f'{self.title} / {self.slug}' 
+    
 
 class Post(models.Model):
     """
@@ -14,7 +36,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="posts", null=True, blank=True)
     image2 = models.ImageField(upload_to="posts", null=True, blank=True)
-
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255)
     text = RichTextUploadingField()
     text2 = RichTextUploadingField(null=True, blank=True)
