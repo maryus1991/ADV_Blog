@@ -32,7 +32,7 @@ urlpatterns = [
     path("token/login/", CustomAuthenticationsToken.as_view()),
     path("token/logout/", CustomLogoutToken.as_view()),
     # JWT authentications urls
-    path("jwt/create/", CustomTokenObtainPairView.as_view()),
+    path("jwt/create/", CustomTokenObtainPairView.as_view(), name='CustomTokenObtainPairView'),
     path("jwt/refresh/", TokenRefreshView.as_view()),
     path("jwt/verify/", TokenVerifyView.as_view()),
     # forgot password and resent email for account activation

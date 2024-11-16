@@ -12,6 +12,7 @@ class CategoryManager(models.Manager):
 
     def get_queryset(self):
         return super().get_queryset().filter(is_active=True).order_by("-id").all()
+        
 
 class Category(models.Model):
     """
@@ -20,7 +21,7 @@ class Category(models.Model):
 
     title = models.CharField(max_length=255)
     slug = models.SlugField(allow_unicode=True, db_index=True)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
 
     objects = CategoryManager()
 

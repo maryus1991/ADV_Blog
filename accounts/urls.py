@@ -17,10 +17,10 @@ from .views import (
 )
 
 urlpatterns = [
-    path("", cache_page(60 * 60 * 24 * 364)(Dashboard.as_view()), name="Dashboard"),
+    path("", cache_page(60 * 15)(Dashboard.as_view()), name="Dashboard"),
     path(
         "authorize/",
-        cache_page(60 * 60 * 24 * 364)(Authorizations.as_view()),
+        Authorizations.as_view(),
         name="Authorizations",
     ),
     path("register/", Registrations.as_view(), name="Registrations"),
@@ -38,11 +38,12 @@ urlpatterns = [
         name="ForgotPassword_token",
     ),
     path("change-password", ChangePassword.as_view(), name="ChangePassword"),
-    path("change-email", ChangeEmail.as_view(), name="ChangeEmail"),
     path("update-profile", UpdateProfile.as_view(), name="UpdateProfile"),
+    
+    path("change-email", ChangeEmail.as_view(), name="ChangeEmail"),
     path(
         "resent-email",
-        cache_page(60 * 60 * 24 * 364)(ResentEmail.as_view()),
+        ResentEmail.as_view(),
         name="ResentEmail",
     ),
     path("api/v1/", include("accounts.api.v1.urls")),

@@ -71,6 +71,7 @@ class Authorizations(TemplateView):
 
         return super().dispatch(request, *args, **kwargs)
 
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         """
@@ -270,10 +271,10 @@ class Logout(View):
     def get(self, request, *args, **kwargs):
         # calling get method for logout is just for developer and not for user and production
         # so if debug is true  the developer can log out via url
-        if settings.DEBUG:
-            logout(request)
-            messages.success(request, "منتظر ورود دوباره شما هستیم ")
-            return redirect(reverse("Authorizations"))
+
+        logout(request)
+        messages.success(request, "منتظر ورود دوباره شما هستیم ")
+        return redirect(reverse("Authorizations"))
 
     def post(self, request, *args, **kwargs):
         # set post method for logout in production
