@@ -15,7 +15,7 @@ urlpatterns = [
     path("", cache_page(30 * 60)(PostsListsViews.as_view()), name="PostsListsViews"),
     path(
         "<int:pk>/",
-        cache_page(30 * 60)(PostsDetailViews.as_view()),
+        PostsDetailViews.as_view(),
         name="PostsDetailViews",
     ),
     path(

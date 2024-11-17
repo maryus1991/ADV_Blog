@@ -84,9 +84,9 @@ class PostsDetailViews(DetailView):
 
             # getting the parent id and check it not empty
             pid = request.POST.get("parent")
-            if pid != "":
+            try:
                 pid = int(pid)
-            else:
+            except:
                 pid = None
 
             # create the comment

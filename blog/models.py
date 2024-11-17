@@ -35,8 +35,8 @@ class Post(models.Model):
     """
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="posts", null=True, blank=True)
-    image2 = models.ImageField(upload_to="posts", null=True, blank=True)
+    image = models.ImageField(upload_to="posts/", null=True, blank=True)
+    image2 = models.ImageField(upload_to="posts/", null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255)
     text = RichTextUploadingField()
