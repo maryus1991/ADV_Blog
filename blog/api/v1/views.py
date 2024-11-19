@@ -199,15 +199,14 @@ class PostCommentModelViewSet(ModelViewSet):
         data = request.data
 
         # get the values
-        full_name, email, comment = (
+        full_name, comment_text = (
             data.get("full_name"),
-            data.get("email"),
             data.get("comment"),
         )
 
         # check if values if not None and not empty string
-        if full_name is not None and email is not None and comment is not None:
-            if full_name != " " and email != " " and comment != " ":
+        if full_name is not None and comment_text is not None:
+            if full_name != " "  and comment_text != " ":
 
                 # get object from db if exists
                 comment = PostsComment.objects.filter(
@@ -233,7 +232,7 @@ class PostCommentModelViewSet(ModelViewSet):
 
                             # update the object and return 201 status
                             comment.full_name = full_name
-                            comment.comment = comment
+                            comment.comment = comment_text
                             comment.updated_at = datetime.datetime.now()
                             comment.save()
 
@@ -283,11 +282,11 @@ class PostCommentModelViewSet(ModelViewSet):
 
         """ checking the user that just the comment owner or admin user can delete the comment  """
         if user.is_superuser or (
-            (comment.email == user.email) and user.is_verified and user.is_active
-        ):
+            (comment.email == user.email) and user.is_verified and user.is_active ):
 
-            # deactivate the objects
+            # deactivate the object
             comment.is_active = False
+            comment.save()
             comment.updated_at = datetime.datetime.now()
             comment.save()
 

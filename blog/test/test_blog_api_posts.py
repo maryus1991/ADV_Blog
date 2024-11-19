@@ -129,8 +129,154 @@ class TestPostsApi:
         assert visit_counter_second_objects.count > 0
         assert visit_counter_second_objects.ip is not None  
 
-    def test_update_posts_and_comment_with_valid_data(self, client):pass
+    def test_update_posts_and_comment_with_valid_data_and_with_put_method(self, client):
+        
+        # get post object and comment
+        post = Post.objects.create(
+            author_id=client[-1].id,
+            title='test'
+            ,text='test'
+        )
+        comment = PostsComment.objects.create(
+            post_id=post.id,
+            email=user_options.get('email'),
+            comment='test',
+            full_name='mez'
+        )
 
-    def test_delete_posts_and_comments(self, client):pass
+        # get the urls
+        post_update_url = reverse('post-detail', kwargs={'pk': post.pk})
+        comment_update_url = reverse('comment-detail', kwargs={'pk': comment.pk, 'post_id': post.pk})
 
+        # send put request to update
+        response_post = client[0].put(
+            post_update_url,
+            {
+                "title": "11234",
+                "text": "1234",
+                "text2": "123444",
+            }
+        )
 
+        response_comment = client[0].put(
+            comment_update_url,
+            {
+                "full_name": "mostafa",
+                "comment": '123456788',
+                'email': user_options.get('email')
+            }
+        )
+
+        # check the status code
+
+        assert response_post.status_code == 200
+        assert response_comment.status_code == 202
+
+        # check the data base
+
+        # get post  updated object and comment
+        update_post_object = Post.objects.filter(id=post.id).first()
+        update_comment_object = PostsComment.objects.filter( id=comment.id ).first()
+
+        # check the objects
+        assert post.title != update_post_object.title
+        assert post.text  != update_post_object.text
+        assert post.text2 != update_post_object.text2
+        assert comment.full_name != update_comment_object.full_name
+        assert comment.comment != update_comment_object.comment
+
+    def test_update_posts_and_comment_with_valid_data_and_with_patch_method(self, client):
+        # get post object and comment
+        post = Post.objects.create(
+            author_id=client[-1].id,
+            title='test'
+            ,text='test'
+        )
+        comment = PostsComment.objects.create(
+            post_id=post.id,
+            email=user_options.get('email'),
+            comment='test',
+            full_name='mez'
+        )
+
+        # get the urls
+        post_update_url = reverse('post-detail', kwargs={'pk': post.pk})
+        comment_update_url = reverse('comment-detail', kwargs={'pk': comment.pk, 'post_id': post.pk})
+
+        # send put request to update
+        response_post = client[0].patch(
+            post_update_url,
+            {
+                "title": "11234",
+                "text2": "123444",
+            }
+        )
+
+        response_comment = client[0].patch(
+            comment_update_url,
+            {
+                'full_name':'mostafa',
+                "comment": '123456788',
+            }
+        )
+
+        # check the status code
+
+        assert response_post.status_code == 200
+        assert response_comment.status_code == 202
+
+        # check the data base
+
+        # get post  updated object and comment
+        update_post_object = Post.objects.filter(id=post.id).first()
+        update_comment_object = PostsComment.objects.filter( id=comment.id ).first()
+
+        # check the objects
+        assert post.title != update_post_object.title
+        assert post.text  == update_post_object.text
+        assert post.text2 != update_post_object.text2
+        assert comment.full_name != update_comment_object.full_name
+        assert comment.comment != update_comment_object.comment
+
+    def test_delete_posts_and_comments_status_code_204(self, client):
+
+        # get post object and comment
+        post = Post.objects.create(
+            author_id=client[-1].id,
+            title='test'
+            ,text='test'
+        )
+        comment = PostsComment.objects.create(
+            post_id=post.id,
+            email=user_options.get('email'),
+            comment='test',
+            full_name='mez'
+        )
+        assert post.id == comment.post.id 
+
+        # get the urls
+        post_update_url = reverse('post-detail', kwargs={'pk': post.pk})
+        comment_update_url = reverse('comment-detail', kwargs={'pk': comment.pk, 'post_id': post.pk})
+
+        # send the requests
+        post_update_response = client[0].delete(
+            post_update_url
+        )            
+        comment_update_response = client[0].delete(
+            comment_update_url
+        )    
+
+        # check the status
+
+        assert post_update_response.status_code == 204
+        assert comment_update_response.status_code == 204
+
+        # check the data base
+        # get post object and comment if exist
+        post = Post.objects.filter(id=post.id).first()
+        comment = PostsComment.objects.filter(id=comment.pk).exists()
+        
+
+        # check the object
+        assert post.is_active == False 
+        assert  comment == False

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor.fields import RichTextField
 
 # get the user model
 User = get_user_model()
@@ -79,7 +80,7 @@ class PostsComment(models.Model):
 
     full_name = models.CharField(max_length=255)
     email = models.EmailField()
-    comment = RichTextUploadingField()
+    comment = RichTextField()
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     parent = models.ForeignKey(
         "self", related_name="child", on_delete=models.CASCADE, null=True, blank=True
