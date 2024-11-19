@@ -20,6 +20,7 @@ class PostModelViewSet(ModelViewSet):
     # set the permission class that for post owner user or read only for other users
     permission_classes = [IsOwnerOrReadOnly]
     serializer_class = PostModelSerializer
+    
 
     # set filters
     filter_backends = [

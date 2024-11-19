@@ -193,6 +193,7 @@ class UserChangePassWord(UpdateAPIView):
 
                     # set new password for user
                     user.set_password(new_password)
+                    user.save()
                     return Response(
                         "your password is successfully change",
                         status=status.HTTP_202_ACCEPTED,
@@ -212,7 +213,6 @@ class UserChangePassWord(UpdateAPIView):
             # set error for user not found
             return Response("user not found", status=status.HTTP_404_NOT_FOUND)
 
-        return Response(status=status.HTTP_202_ACCEPTED)
 
 
 class UserChangeEmail(UpdateAPIView):
@@ -328,7 +328,7 @@ class UserChangeProfile(UpdateAPIView):
 
                 user.first_name = serializer.validated_data.get("first_name")
                 user.last_name = serializer.validated_data.get("last_name")
-                user.avatar = serializer.validated_data.get("avatar")
+                user.avatar = serializer.validated_data.get("avatar") if serializer.validated_data.get("avatar") is not None else None
                 user.updated_at = datetime.datetime.now()
                 user.save()
 
@@ -416,7 +416,7 @@ class ForgotPassword(GenericAPIView):
 
             return Response(
                 f"an email has been successfully to ({email}) please enter and change your password"
-            )
+            ,status=status.HTTP_202_ACCEPTED)
         else:
             # set not found error
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -475,7 +475,7 @@ class ActivationAccount(GenericAPIView):
 
             return Response(
                 f"an email has been successfully to ({email}) please enter and verify your acount"
-            )
+            ,status=status.HTTP_202_ACCEPTED)
         else:
             # set not found error
             return Response(status=status.HTTP_404_NOT_FOUND)

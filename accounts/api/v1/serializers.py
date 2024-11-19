@@ -202,4 +202,4 @@ class ChangeUserInformation(serializers.Serializer):
 
     first_name = serializers.CharField(trim_whitespace=True, max_length=255)
     last_name = serializers.CharField(trim_whitespace=True, max_length=255)
-    avatar = serializers.ImageField(allow_empty_file=True)
+    avatar = serializers.ImageField(allow_empty_file=True, required=False)
