@@ -13,7 +13,7 @@ jobs:
     - name: Run the Docker Compose
       run: docker compose up -d
     - name: Run flake8
-      run: dokcer compose exec blog sh -c 'blake . && flake8 .'
+      run: dokcer compose exec blog sh -c ' flake8 .'
     - name: Run Unit Test
       run: dokcer compose exec blog sh -c 'django manage.py test'
     - name: Run PyTest For Testing APIs
