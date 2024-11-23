@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0013_alter_category_is_active'),
+        ("blog", "0013_alter_category_is_active"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='post',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to='posts/'),
+            model_name="post",
+            name="image",
+            field=models.ImageField(blank=True, null=True, upload_to="posts/"),
         ),
         migrations.AlterField(
-            model_name='post',
-            name='image2',
-            field=models.ImageField(blank=True, null=True, upload_to='posts/'),
+            model_name="post",
+            name="image2",
+            field=models.ImageField(blank=True, null=True, upload_to="posts/"),
         ),
     ]

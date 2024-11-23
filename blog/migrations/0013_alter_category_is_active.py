@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0012_category_is_active'),
+        ("blog", "0012_category_is_active"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='category',
-            name='is_active',
+            model_name="category",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
     ]

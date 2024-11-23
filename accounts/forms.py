@@ -110,7 +110,7 @@ class RegistrationForm(forms.Form):
 
 
 class ChangePasswordForm(forms.Form):
-    """ 
+    """
     ChangePasswordForm for change password with login status
     """
 
@@ -184,7 +184,7 @@ class SendMail_EmailField(forms.Form):
 
 class UpdateProfileForm(forms.ModelForm):
     """
-    form for user info update 
+    form for user info update
     """
 
     # setting thr avatar part for more customizing
@@ -247,9 +247,9 @@ class UpdateEmailForm(forms.Form):
 class UserSetPasswordForm(forms.Form):
     """
     for changing user password with out sending email
-     for form  thats needs to get and check the password 
-    so i get the password for all choose forms in one fields 
-    for not rewrite the password code ans 
+     for form  thats needs to get and check the password
+    so i get the password for all choose forms in one fields
+    for not rewrite the password code ans
     """
 
     current_password = forms.CharField(

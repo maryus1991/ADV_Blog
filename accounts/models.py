@@ -17,7 +17,7 @@ class UserManager(BaseUserManager):
         """
         for Create a simple user
         """
-        
+
         if not email:
             raise ValueError(_("email not valid"))
 

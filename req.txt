@@ -13,6 +13,7 @@ djangorestframework-simplejwt==5.3.1
 drf-yasg==1.21.8
 Faker==30.1.0
 flake8==7.1.1
+gunicorn==23.0.0
 inflection==0.5.1
 iniconfig==2.0.0
 mccabe==0.7.0

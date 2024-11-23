@@ -135,12 +135,12 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": config("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
         "NAME": config("POSTGRES_DB"),
         "USER": config("POSTGRES_USER"),
         "PASSWORD": config("POSTGRES_PASSWORD"),
         "HOST": config("POSTGRES_HOST", default="postgres"),
-        "PORT": 5432,
+        "PORT": config("POSTGRES_PORT", default="5432"),
     }
 }
 
@@ -179,10 +179,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "assets/"
-STATIC_ROOT = "static-cdn/"
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+STATIC_ROOT = BASE_DIR / "static"
+
 
 # media config
 MEDIA_URL = "media/"

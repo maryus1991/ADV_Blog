@@ -39,7 +39,6 @@ urlpatterns = [
     ),
     path("change-password", ChangePassword.as_view(), name="ChangePassword"),
     path("update-profile", UpdateProfile.as_view(), name="UpdateProfile"),
-    
     path("change-email", ChangeEmail.as_view(), name="ChangeEmail"),
     path(
         "resent-email",

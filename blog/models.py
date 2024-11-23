@@ -6,6 +6,7 @@ from ckeditor.fields import RichTextField
 # get the user model
 User = get_user_model()
 
+
 class CategoryManager(models.Manager):
     """
     for showing just active objects
@@ -13,7 +14,7 @@ class CategoryManager(models.Manager):
 
     def get_queryset(self):
         return super().get_queryset().filter(is_active=True).order_by("-id").all()
-        
+
 
 class Category(models.Model):
     """
@@ -27,8 +28,8 @@ class Category(models.Model):
     objects = CategoryManager()
 
     def __str__(self):
-        return f'{self.title} / {self.slug}' 
-    
+        return f"{self.title} / {self.slug}"
+
 
 class Post(models.Model):
     """
@@ -38,7 +39,9 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="posts/", null=True, blank=True)
     image2 = models.ImageField(upload_to="posts/", null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True
+    )
     title = models.CharField(max_length=255)
     text = RichTextUploadingField()
     text2 = RichTextUploadingField(null=True, blank=True)

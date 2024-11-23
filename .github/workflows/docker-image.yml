@@ -1,1 +1,19 @@
-
+name: ADV Blog CI/CD
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run the Docker Compose
+      run: docker compose up -d
+    - name: Run flake8
+      run: dokcer compose exec blog sh -c 'blake . && flake8 .'
+    - name: Run Unit Test
+      run: dokcer compose exec blog sh -c 'django manage.py test'
+    - name: Run PyTest For Testing APIs
+      run: dokcer compose exec blog sh -c 'pytest . '

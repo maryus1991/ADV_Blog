@@ -20,7 +20,6 @@ class PostModelViewSet(ModelViewSet):
     # set the permission class that for post owner user or read only for other users
     permission_classes = [IsOwnerOrReadOnly]
     serializer_class = PostModelSerializer
-    
 
     # set filters
     filter_backends = [
@@ -31,12 +30,11 @@ class PostModelViewSet(ModelViewSet):
 
     # set fields for filter and search
     search_fields = {
-        "title": ['exec', 'in'],
-        "text": ['exec', 'in'],
-        "text2": ['exec', 'in'],
-        'category__title':['in', 'exec'],
-        'category__slug':['in', 'exec'],
-
+        "title": ["exec", "in"],
+        "text": ["exec", "in"],
+        "text2": ["exec", "in"],
+        "category__title": ["in", "exec"],
+        "category__slug": ["in", "exec"],
     }
 
     filterset_fields = {
@@ -68,16 +66,16 @@ class PostModelViewSet(ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise AuthenticationFailed("Your are not allowed to delete ")
-    
+
     def retrieve(self, request, *args, **kwargs):
         # call and overwrite the retrieve dev for count the views
-        
+
         # getting ip
         ip = get_ip(request)
 
         # create views is its ip is not exist  or returned it if exist
         view = PostViews.objects.get_or_create(
-            post_id=kwargs.get('pk'),
+            post_id=kwargs.get("pk"),
             ip=ip,
             user=request.user if request.user.is_authenticated else None,
         )
@@ -206,7 +204,7 @@ class PostCommentModelViewSet(ModelViewSet):
 
         # check if values if not None and not empty string
         if full_name is not None and comment_text is not None:
-            if full_name != " "  and comment_text != " ":
+            if full_name != " " and comment_text != " ":
 
                 # get object from db if exists
                 comment = PostsComment.objects.filter(
@@ -282,7 +280,8 @@ class PostCommentModelViewSet(ModelViewSet):
 
         """ checking the user that just the comment owner or admin user can delete the comment  """
         if user.is_superuser or (
-            (comment.email == user.email) and user.is_verified and user.is_active ):
+            (comment.email == user.email) and user.is_verified and user.is_active
+        ):
 
             # deactivate the object
             comment.is_active = False
