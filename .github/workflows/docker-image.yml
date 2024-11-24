@@ -35,7 +35,7 @@ jobs:
         password: ${{secrets.PASSWORD}}
         host: ${{secrets.HOST}}
         port: ${{secrets.PORT}}
-        script: 
+        script: |
           cd {{secrets.PATH}}
           docker compose stop
           git pull blog master
