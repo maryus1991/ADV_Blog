@@ -36,7 +36,7 @@ jobs:
         host: ${{secrets.HOST}}
         port: ${{secrets.PORT}}
         script: |
-          cd {{secrets.PATH}}
+          cd ${{secrets.PATH}}
           docker compose stop
           git pull blog master
           docker compose -f docker-compose-production.yml up 
