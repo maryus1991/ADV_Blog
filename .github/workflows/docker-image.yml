@@ -6,7 +6,8 @@ on:
     branches: [ "master" ]
     
 jobs:
-  build:
+
+  Test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -18,3 +19,17 @@ jobs:
       run: docker compose exec blog sh -c 'python manage.py test'
     - name: Run PyTest For Testing APIs
       run: docker compose exec blog sh -c 'pytest . '
+
+  Deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Connect and Execute Command
+      uses: appleboy/ssh-action@master
+      with:
+        username: ${{secrets.USERNAME}}
+        password: ${{secrets.PASSWORD}}
+        host: ${{secrets.HOST}}
+        port: ${{secrets.PORT}}
+        script: ls

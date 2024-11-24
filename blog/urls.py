@@ -12,7 +12,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("", cache_page(30 * 60)(PostsListsViews.as_view()), name="PostsListsViews"),
+    path("", PostsListsViews.as_view(), name="PostsListsViews"),
     path(
         "<int:pk>/",
         PostsDetailViews.as_view(),

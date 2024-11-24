@@ -17,7 +17,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("", cache_page(60 * 15)(Dashboard.as_view()), name="Dashboard"),
+    path("", Dashboard.as_view(), name="Dashboard"),
     path(
         "authorize/",
         Authorizations.as_view(),
