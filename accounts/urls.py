@@ -1,5 +1,5 @@
 from django.urls import path, include
-from django.views.decorators.cache import cache_page
+
 
 from .views import (
     Dashboard,
@@ -29,7 +29,7 @@ urlpatterns = [
     path("conform/<token>", ConformAccount.as_view(), name="ConformAccount"),
     path(
         "forgot-password/",
-        cache_page(60 * 60 * 24 * 364)(ForgotPassword.as_view()),
+        ForgotPassword.as_view(),
         name="ForgotPassword",
     ),
     path(

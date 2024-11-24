@@ -21,10 +21,13 @@ jobs:
       run: docker compose exec blog sh -c 'pytest . '
 
   Deploy:
+    if: ${{ contains(join(needs.*.result, ','), 'success')}}
     name: Deploy
+    needs: Test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    
     - name: Connect and Execute Command
       uses: appleboy/ssh-action@master
       with:
@@ -32,4 +35,8 @@ jobs:
         password: ${{secrets.PASSWORD}}
         host: ${{secrets.HOST}}
         port: ${{secrets.PORT}}
-        script: ls
+        script: 
+          cd {{secrets.PATH}}
+          docker compose stop
+          git pull blog master
+          docker compose -f docker-compose-production.yml up 
