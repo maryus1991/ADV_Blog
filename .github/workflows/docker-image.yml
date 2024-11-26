@@ -36,7 +36,7 @@ jobs:
         host: ${{secrets.HOST}}
         port: ${{secrets.PORT}}
         script: |
-          cd ADV_Blog
-          docker compose stop
+          cd ADV_Blog/
+          docker compose -f docker-compose-production.yml stop
           git pull 
-          docker compose -f docker-compose-production.yml up 
+          docker compose -f docker-compose-production.yml up -d
