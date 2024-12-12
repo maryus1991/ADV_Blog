@@ -1,0 +1,15 @@
+[
+  "SiteSetting/test/test_sitesetting_api.py::TestSiteSetting::test_create_contact_by_user_and_get_site_setting_api",
+  "accounts/test/test_acounts_authentications_api.py::TestAccountAuthenticatedApi::test_forgot_password_and_rent_email_api_with_anonymous_request_and_valid_data",
+  "accounts/test/test_acounts_authentications_api.py::TestAccountAuthenticatedApi::test_jwt_verify_url_and_jwt_refresh_url_with_valid_and_invalid_user_information",
+  "accounts/test/test_acounts_authentications_api.py::TestAccountAuthenticatedApi::test_login_and_logout_token_authentication_and_get_user_information_urls_with_user_information",
+  "accounts/test/test_acounts_authentications_api.py::TestAccountAuthenticatedApi::test_registration_api_url_with_valid_and_invalid_data",
+  "accounts/test/test_acounts_authentications_api.py::TestAccountAuthenticatedApi::test_registration_api_url_with_valid_data",
+  "accounts/test/test_acounts_authentications_api.py::TestAccountAuthenticatedApi::test_user_change_password_and_user_change_email_and_user_update_profile_and_get_user_information_urls_with_valid_data",
+  "blog/test/test_blog_api_posts.py::TestPostsApi::test_create_post_and_create_comment_api_with_valid_data",
+  "blog/test/test_blog_api_posts.py::TestPostsApi::test_delete_posts_and_comments",
+  "blog/test/test_blog_api_posts.py::TestPostsApi::test_delete_posts_and_comments_status_code_204",
+  "blog/test/test_blog_api_posts.py::TestPostsApi::test_get_and_retrieve_posts_and_count_views_and_get_and_retrieve_comments_api",
+  "blog/test/test_blog_api_posts.py::TestPostsApi::test_update_posts_and_comment_with_valid_data_and_with_patch_method",
+  "blog/test/test_blog_api_posts.py::TestPostsApi::test_update_posts_and_comment_with_valid_data_and_with_put_method"
+]
