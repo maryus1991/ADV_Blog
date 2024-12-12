@@ -96,7 +96,10 @@ class PostsDetailViews(DetailView):
                 full_name=form.cleaned_data.get("full_name"),
                 post=self.get_object(),
                 parent_id=pid,
+                
             )
+
+            messages.success(request, "کامنت شما با مفقیت گذاشته شد")
 
         # return for the posts
         return redirect(

@@ -20,23 +20,23 @@ jobs:
     - name: Run PyTest For Testing APIs
       run: docker compose exec blog sh -c 'pytest . '
 
-  Deploy:
-    if: ${{ contains(join(needs.*.result, ','), 'success')}}
-    name: Deploy
-    needs: Test
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
+  # Deploy:
+  #   if: ${{ contains(join(needs.*.result, ','), 'success')}}
+  #   name: Deploy
+  #   needs: Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
     
-    - name: Connect and Execute Command
-      uses: appleboy/ssh-action@master
-      with:
-        username: ${{secrets.USERNAME}}
-        password: ${{secrets.PASSWORD}}
-        host: ${{secrets.HOST}}
-        port: ${{secrets.PORT}}
-        script: |
-          cd ADV_Blog/
-          docker compose -f docker-compose-production.yml stop
-          git pull 
-          docker compose -f docker-compose-production.yml up -d
+  #   - name: Connect and Execute Command
+  #     uses: appleboy/ssh-action@master
+  #     with:
+  #       username: ${{secrets.USERNAME}}
+  #       password: ${{secrets.PASSWORD}}
+  #       host: ${{secrets.HOST}}
+  #       port: ${{secrets.PORT}}
+  #       script: |
+  #         cd ADV_Blog/
+  #         docker compose -f docker-compose-production.yml stop
+  #         git pull 
+  #         docker compose -f docker-compose-production.yml up -d

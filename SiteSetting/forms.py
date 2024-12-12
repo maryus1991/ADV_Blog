@@ -37,6 +37,6 @@ class ContactModelForm(forms.ModelForm):
                 attrs={"placeholder": "Phone Number", "id": "validationDefault03"}
             ),
             "subject": forms.TextInput(
-                attrs={"placeholder": "Phone Number", "id": "validationDefault04"}
+                attrs={"placeholder": "Subject", "id": "validationDefault04"}
             ),
         }
